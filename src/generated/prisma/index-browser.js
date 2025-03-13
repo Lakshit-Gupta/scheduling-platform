@@ -256,9 +256,40 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.QuestionType = exports.$Enums.QuestionType = {
+  TEXT: 'TEXT',
+  NUMBER: 'NUMBER',
+  SELECT: 'SELECT',
+  CHECKBOX: 'CHECKBOX'
+};
+
 exports.BookingStatus = exports.$Enums.BookingStatus = {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED'
+};
+
+exports.WorkflowTrigger = exports.$Enums.WorkflowTrigger = {
+  NEW_BOOKING: 'NEW_BOOKING',
+  CANCEL_BOOKING: 'CANCEL_BOOKING',
+  RESCHEDULE_BOOKING: 'RESCHEDULE_BOOKING'
+};
+
+exports.WorkflowAction = exports.$Enums.WorkflowAction = {
+  SEND_EMAIL: 'SEND_EMAIL',
+  SEND_SMS: 'SEND_SMS',
+  WEBHOOK: 'WEBHOOK'
+};
+
+exports.CallType = exports.$Enums.CallType = {
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WEBHOOK: 'WEBHOOK'
+};
+
+exports.CallStatus = exports.$Enums.CallStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
 };
 
 exports.Prisma.ModelName = {

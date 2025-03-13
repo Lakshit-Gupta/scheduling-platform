@@ -3,15 +3,24 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
+import { toast } from "@/components/ui/Toast"
 
 const DURATIONS = [15, 30, 45, 60]
 const BUFFER_OPTIONS = [0, 5, 10, 15, 30]
 const COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"]
+const QUESTION_TYPE_OPTIONS = [
+  { value: "TEXT", label: "Short text" },
+  { value: "NUMBER", label: "Number" },
+  { value: "SELECT", label: "Select" },
+  { value: "CHECKBOX", label: "Checkbox" },
+] as const
+
+type QuestionTypeValue = (typeof QUESTION_TYPE_OPTIONS)[number]["value"]
 
 interface QuestionFormItem {
   label: string
   placeholder: string
-  type: string
+  type: QuestionTypeValue
   required: boolean
   order: number
 }
@@ -34,7 +43,13 @@ export default function NewEventTypePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); setLoading(true)
     const res = await fetch("/api/v1/event-types", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, description, duration, slug, color, bufferMinutes, questions }) })
-    if (res.ok) router.push("/dashboard/event-types")
+    if (!res.ok) {
+      toast("Failed to create event type", "error")
+      setLoading(false)
+      return
+    }
+    toast("Event type created", "success")
+    router.push("/dashboard/event-types")
     setLoading(false)
   }
 
@@ -80,7 +95,7 @@ export default function NewEventTypePage() {
                     {
                       label: "",
                       placeholder: "",
-                      type: "text",
+                      type: "TEXT",
                       required: false,
                       order: prev.length,
                     },
@@ -139,14 +154,19 @@ export default function NewEventTypePage() {
                     onChange={(e) =>
                       setQuestions((prev) =>
                         prev.map((item, itemIndex) =>
-                          itemIndex === index ? { ...item, type: e.target.value } : item
+                          itemIndex === index
+                            ? { ...item, type: e.target.value as QuestionTypeValue }
+                            : item
                         )
                       )
                     }
                     className="rounded-lg border border-neutral-600 bg-neutral-700 px-3 py-2 text-sm text-neutral-100"
                   >
-                    <option value="text">Short text</option>
-                    <option value="textarea">Long text</option>
+                    {QUESTION_TYPE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                   <label className="flex items-center gap-2 text-sm text-neutral-300">
                     <input

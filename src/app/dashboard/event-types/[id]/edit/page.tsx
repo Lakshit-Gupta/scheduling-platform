@@ -4,15 +4,33 @@ import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { toast } from "@/components/ui/Toast"
 
 const DURATIONS = [15, 30, 45, 60]
 const BUFFER_OPTIONS = [0, 5, 10, 15, 30]
 const COLORS = ["#3B82F6", "#EF4444", "#10B981", "#F59E0B", "#8B5CF6", "#EC4899"]
+const QUESTION_TYPE_OPTIONS = [
+  { value: "TEXT", label: "Short text" },
+  { value: "NUMBER", label: "Number" },
+  { value: "SELECT", label: "Select" },
+  { value: "CHECKBOX", label: "Checkbox" },
+] as const
+
+type QuestionTypeValue = (typeof QUESTION_TYPE_OPTIONS)[number]["value"]
+
+function normalizeQuestionType(value?: string): QuestionTypeValue {
+  const normalized = value?.trim().toUpperCase()
+  if (normalized === "TEXT" || normalized === "NUMBER" || normalized === "SELECT" || normalized === "CHECKBOX") {
+    return normalized
+  }
+  if (normalized === "TEXTAREA") return "TEXT"
+  return "TEXT"
+}
 
 interface QuestionFormItem {
   label: string
   placeholder: string
-  type: string
+  type: QuestionTypeValue
   required: boolean
   order: number
 }
@@ -39,7 +57,7 @@ export default function EditEventTypePage() {
         (data.questions || []).map((question: QuestionFormItem, index: number) => ({
           label: question.label,
           placeholder: question.placeholder || "",
-          type: question.type || "text",
+          type: normalizeQuestionType(question.type),
           required: Boolean(question.required),
           order: question.order ?? index,
         }))
@@ -50,7 +68,13 @@ export default function EditEventTypePage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); setLoading(true)
     const res = await fetch(`/api/v1/event-types/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, description, duration, slug, color, bufferMinutes, questions }) })
-    if (res.ok) router.push("/dashboard/event-types")
+    if (!res.ok) {
+      toast("Failed to save event type", "error")
+      setLoading(false)
+      return
+    }
+    toast("Event type updated", "success")
+    router.push("/dashboard/event-types")
     setLoading(false)
   }
 
@@ -105,7 +129,7 @@ export default function EditEventTypePage() {
                     {
                       label: "",
                       placeholder: "",
-                      type: "text",
+                      type: "TEXT",
                       required: false,
                       order: prev.length,
                     },
@@ -164,14 +188,19 @@ export default function EditEventTypePage() {
                     onChange={(e) =>
                       setQuestions((prev) =>
                         prev.map((item, itemIndex) =>
-                          itemIndex === index ? { ...item, type: e.target.value } : item
+                          itemIndex === index
+                            ? { ...item, type: e.target.value as QuestionTypeValue }
+                            : item
                         )
                       )
                     }
                     className="rounded-lg border border-neutral-600 bg-neutral-700 px-3 py-2 text-sm text-neutral-100"
                   >
-                    <option value="text">Short text</option>
-                    <option value="textarea">Long text</option>
+                    {QUESTION_TYPE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                   <label className="flex items-center gap-2 text-sm text-neutral-300">
                     <input
