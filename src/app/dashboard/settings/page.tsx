@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { toast } from "@/components/ui/Toast"
 import {
   User, Bell, Shield, CreditCard, Palette, Globe,
   Trash2, Check, Eye, EyeOff, Moon, Sun, Monitor,
@@ -101,7 +102,7 @@ export default function SettingsPage() {
 
       if (!res.ok) {
         const data = await res.json()
-        alert(data.error || "Failed to save")
+        toast(data.error || "Failed to save", "error")
         setSaveStatus("error")
         setTimeout(() => setSaveStatus("idle"), 2000)
         return
@@ -110,6 +111,7 @@ export default function SettingsPage() {
       setSaveStatus("saved")
       setTimeout(() => setSaveStatus("idle"), 2500)
     } catch {
+      toast("Failed to save", "error")
       setSaveStatus("error")
       setTimeout(() => setSaveStatus("idle"), 2000)
     }
