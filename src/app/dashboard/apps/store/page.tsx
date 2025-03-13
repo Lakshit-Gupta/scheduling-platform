@@ -6,15 +6,15 @@ import { Search, ChevronRight, X, ExternalLink, Check } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const categories = [
-  { name: "Conferencing", count: 26, icon: "/assets/app-categories/conferencing.svg", apps: ["Google Meet", "Zoom Video", "Jitsi Video", "MS Teams"] },
-  { name: "Automation", count: 22, icon: "/assets/app-categories/automation.svg", apps: ["Zapier", "Make", "n8n", "Pipedream"] },
-  { name: "Analytics", count: 11, icon: "/assets/app-categories/analytics.svg", apps: ["Google Analytics", "Mixpanel", "Amplitude"] },
-  { name: "Other", count: 11, icon: "/assets/app-categories/other.svg", apps: ["Discord", "Close.com"] },
-  { name: "Calendar", count: 10, icon: "/assets/app-categories/calendar.svg", apps: ["Google Calendar", "Office 365 Calendar"] },
-  { name: "CRM", count: 8, icon: "/assets/app-categories/crm.svg", apps: ["HubSpot", "Salesforce"] },
-  { name: "Messaging", count: 7, icon: "/assets/app-categories/messaging.svg", apps: ["WhatsApp", "Telegram", "Discord"] },
-  { name: "Payment", count: 5, icon: "/assets/app-categories/payment.svg", apps: ["Stripe", "PayPal"] },
-  { name: "Video", count: 12, icon: "/assets/app-categories/video.svg", apps: ["Zoom Video", "Google Meet", "Jitsi Video", "MS Teams Video"] },
+  { name: "Conferencing", count: 4, icon: "/assets/app-categories/conferencing.svg", apps: ["Google Meet", "Zoom Video", "Jitsi Video", "Office 365 Video"] },
+  { name: "Automation", count: 4, icon: "/assets/app-categories/automation.svg", apps: ["Zapier", "Make", "n8n", "Pipedream"] },
+  { name: "Analytics", count: 0, icon: "/assets/app-categories/analytics.svg", apps: [] },
+  { name: "Other", count: 2, icon: "/assets/app-categories/other.svg", apps: ["Discord", "Close.com"] },
+  { name: "Calendar", count: 2, icon: "/assets/app-categories/calendar.svg", apps: ["Google Calendar", "Office 365 Calendar"] },
+  { name: "CRM", count: 3, icon: "/assets/app-categories/crm.svg", apps: ["HubSpot", "Salesforce", "Close.com"] },
+  { name: "Messaging", count: 3, icon: "/assets/app-categories/messaging.svg", apps: ["WhatsApp", "Telegram", "Discord"] },
+  { name: "Payment", count: 2, icon: "/assets/app-categories/payment.svg", apps: ["Stripe", "PayPal"] },
+  { name: "Video", count: 4, icon: "/assets/app-categories/video.svg", apps: ["Zoom Video", "Google Meet", "Jitsi Video", "Office 365 Video"] },
 ]
 
 const allApps = [
@@ -102,7 +102,7 @@ function AppModal({ app, onClose }: { app: App; onClose: () => void }) {
 }
 
 function CategoryModal({ category, onClose, onSelectApp }: { category: Category; onClose: () => void; onSelectApp: (app: App) => void }) {
-  const categoryApps = allApps.filter((app) => app.category === category.name)
+  const categoryApps = allApps.filter((app) => app.category === category.name || category.apps.includes(app.name))
 
   return (
     <motion.div
@@ -154,7 +154,7 @@ function CategoryModal({ category, onClose, onSelectApp }: { category: Category;
               <span className="shrink-0 text-xs text-neutral-500">Connect →</span>
             </button>
           )) : (
-            <p className="py-8 text-center text-sm text-neutral-500">No apps available in this category yet.</p>
+            <p className="py-8 text-center text-sm text-neutral-500">{category.name === "Analytics" ? "No analytics apps available yet. Check back soon." : "No apps available in this category yet."}</p>
           )}
         </div>
       </motion.div>
