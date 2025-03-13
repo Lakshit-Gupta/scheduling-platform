@@ -1,29 +1,25 @@
 import { format } from "date-fns"
+import { Resend } from "resend"
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY
+const resend = new Resend(process.env.RESEND_API_KEY)
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "no-reply@send.lakshit.dev"
 
 async function sendEmail(to: string, subject: string, html: string) {
-  if (!RESEND_API_KEY) {
+  if (!process.env.RESEND_API_KEY) {
     console.log("[Email] RESEND_API_KEY not set, skipping email")
     return
   }
+
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "Cal Clone <onboarding@resend.dev>",
-        to,
-        subject,
-        html,
-      }),
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject,
+      html,
     })
-    if (!res.ok) {
-      const err = await res.text()
-      console.error("[Email] Failed:", err)
+
+    if (error) {
+      console.error("[Email] Failed:", error)
     }
   } catch (e) {
     console.error("[Email] Error:", e)

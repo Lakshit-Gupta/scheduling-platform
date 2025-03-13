@@ -2,15 +2,44 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Plus, Zap, Phone, ArrowUpRight, ArrowDownLeft, MoreHorizontal } from "lucide-react"
+import {
+  Plus,
+  Zap,
+  Phone,
+  Mail,
+  MessageSquare,
+  Link2,
+  MoreHorizontal,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 
 interface Workflow { id: string; title: string; description: string | null; isActive: boolean; trigger: string; action: string; timeValue: number; timeUnit: string; createdAt: string; updatedAt: string }
 interface CallHistoryEntry { id: string; workflowId: string; callerName: string; callerPhone: string | null; callerEmail: string | null; callType: string; status: string; duration: number; startedAt: string; endedAt: string | null; notes: string | null }
 
-const triggerLabels: Record<string, string> = { BEFORE_EVENT: "Before Event", AFTER_EVENT: "After Event", NEW_EVENT: "New Event Booked", CANCELLED_EVENT: "Event Cancelled", RESCHEDULED_EVENT: "Event Rescheduled" }
-const actionLabels: Record<string, string> = { EMAIL_REMINDER: "Send Email Reminder", SMS_REMINDER: "Send SMS Reminder", WEBHOOK: "Trigger Webhook", EMAIL_ATTENDEE: "Email Attendee", SMS_ATTENDEE: "SMS Attendee" }
+const triggerLabels: Record<string, string> = {
+  NEW_BOOKING: "New Booking",
+  CANCEL_BOOKING: "Booking Cancelled",
+  RESCHEDULE_BOOKING: "Booking Rescheduled",
+}
+
+const actionLabels: Record<string, string> = {
+  SEND_EMAIL: "Send Email",
+  SEND_SMS: "Send SMS",
+  WEBHOOK: "Trigger Webhook",
+}
+
+const callTypeLabels: Record<string, string> = {
+  EMAIL: "Email",
+  SMS: "SMS",
+  WEBHOOK: "Webhook",
+}
+
+const callTypeIcons = {
+  EMAIL: Mail,
+  SMS: MessageSquare,
+  WEBHOOK: Link2,
+} as const
 
 function formatDuration(seconds: number): string { if (seconds < 60) return `${seconds}s`; const mins = Math.floor(seconds / 60); const secs = seconds % 60; return secs > 0 ? `${mins}m ${secs}s` : `${mins}m` }
 function formatDate(dateStr: string): string { return new Date(dateStr).toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Kolkata" }) }
@@ -106,8 +135,24 @@ export default function WorkflowsPage() {
                       <tr key={call.id} className="transition-colors hover:bg-card-hover">
                         <td className="px-6 py-4"><p className="font-medium text-fg">{call.callerName}</p>{call.callerEmail && <p className="text-xs text-dim">{call.callerEmail}</p>}</td>
                         <td className="hidden px-6 py-4 text-muted sm:table-cell">{call.callerPhone || "—"}</td>
-                        <td className="px-6 py-4"><span className="inline-flex items-center gap-1 text-sm text-muted">{call.callType === "OUTGOING" ? <ArrowUpRight className="h-3.5 w-3.5 text-blue-400" /> : <ArrowDownLeft className="h-3.5 w-3.5 text-green-400" />}{call.callType === "OUTGOING" ? "Outgoing" : "Incoming"}</span></td>
-                        <td className="px-6 py-4"><span className={cn("rounded-md px-2 py-0.5 text-xs font-medium", call.status === "COMPLETED" && "bg-emerald-500/10 text-emerald-400", call.status === "MISSED" && "bg-red-500/10 text-red-400", call.status === "FAILED" && "bg-surface text-dim", call.status === "IN_PROGRESS" && "bg-blue-500/10 text-blue-400")}>{call.status}</span></td>
+                        <td className="px-6 py-4">
+                          <span className="inline-flex items-center gap-1 text-sm text-muted">
+                            {(() => {
+                              const CallTypeIcon =
+                                callTypeIcons[
+                                  call.callType as keyof typeof callTypeIcons
+                                ] || Phone
+                              const label = callTypeLabels[call.callType] || call.callType
+                              return (
+                                <>
+                                  <CallTypeIcon className="h-3.5 w-3.5 text-blue-400" />
+                                  {label}
+                                </>
+                              )
+                            })()}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4"><span className={cn("rounded-md px-2 py-0.5 text-xs font-medium", call.status === "COMPLETED" && "bg-emerald-500/10 text-emerald-400", call.status === "FAILED" && "bg-red-500/10 text-red-400", call.status === "PENDING" && "bg-blue-500/10 text-blue-400")}>{call.status}</span></td>
                         <td className="hidden px-6 py-4 text-muted md:table-cell">{formatDuration(call.duration)}</td>
                         <td className="hidden px-6 py-4 text-muted lg:table-cell">{formatDate(call.startedAt)}</td>
                       </tr>

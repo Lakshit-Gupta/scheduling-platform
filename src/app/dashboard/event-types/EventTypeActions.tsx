@@ -9,11 +9,11 @@ export default function EventTypeActions({ id, slug }: { id: string; slug: strin
   const router = useRouter()
   const [deleting, setDeleting] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
-  async function handleDelete() {
+  async function handleDelete(eventTypeId: string) {
     setDeleting(true)
-    const res = await fetch(`/api/v1/event-types/${id}`, { method: "DELETE" })
+    const res = await fetch(`/api/v1/event-types/${eventTypeId}`, { method: "DELETE" })
     if (!res.ok) {
       toast("Failed to delete event type", "error")
       setDeleting(false)
@@ -22,37 +22,46 @@ export default function EventTypeActions({ id, slug }: { id: string; slug: strin
     toast("Event type deleted", "success")
     router.refresh()
     setDeleting(false)
-    setConfirmDelete(false)
+    setConfirmingId(null)
   }
 
   function handleCopyLink() {
     const url = `${window.location.origin}/${slug}`
-    navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setCopied(true)
+        toast("Public link copied", "success")
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch(() => {
+        toast("Failed to copy public link", "error")
+      })
   }
 
   return (
-    <div className="flex items-center gap-0.5">
-      <button onClick={handleCopyLink} title="Copy link"
+    <div className="relative z-20 flex items-center gap-0.5">
+      <button type="button" onClick={handleCopyLink} title="Copy link"
         className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] text-neutral-400 transition-all duration-150 hover:bg-neutral-700 hover:text-neutral-100">
         <Copy className="h-3.5 w-3.5" />{copied ? "Copied!" : "Copy"}
       </button>
-      <button onClick={() => router.push(`/dashboard/event-types/${id}/edit`)} title="Edit"
+      <button type="button" onClick={() => router.push(`/dashboard/event-types/${id}/edit`)} title="Edit"
         className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] text-neutral-400 transition-all duration-150 hover:bg-neutral-700 hover:text-neutral-100">
         <Pencil className="h-3.5 w-3.5" />Edit
       </button>
-      {confirmDelete ? (
+      {confirmingId === id ? (
         <div className="flex items-center gap-2 rounded-lg px-2.5 py-1.5">
           <button
-            onClick={handleDelete}
+            type="button"
+            onClick={() => handleDelete(id)}
             disabled={deleting}
             className="text-xs font-medium text-red-400 transition-colors hover:text-red-300 disabled:opacity-50"
           >
             {deleting ? "..." : "Confirm"}
           </button>
           <button
-            onClick={() => setConfirmDelete(false)}
+            type="button"
+            onClick={() => setConfirmingId(null)}
             disabled={deleting}
             className="text-xs text-neutral-500 transition-colors hover:text-neutral-300 disabled:opacity-50"
           >
@@ -61,7 +70,8 @@ export default function EventTypeActions({ id, slug }: { id: string; slug: strin
         </div>
       ) : (
         <button
-          onClick={() => setConfirmDelete(true)}
+          type="button"
+          onClick={() => setConfirmingId(id)}
           title="Delete"
           className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] text-neutral-400 transition-all duration-150 hover:bg-red-500/10 hover:text-red-400"
         >

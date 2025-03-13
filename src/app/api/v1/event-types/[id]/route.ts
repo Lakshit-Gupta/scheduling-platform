@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
+import { QuestionType } from "@/generated/prisma/client"
+
+function parseQuestionType(value: unknown): QuestionType {
+  if (typeof value !== "string") return QuestionType.TEXT
+  const normalized = value.trim().toUpperCase()
+  if (normalized === "TEXTAREA") return QuestionType.TEXT
+  if (normalized in QuestionType) return normalized as QuestionType
+  return QuestionType.TEXT
+}
 
 export async function GET(
   _request: NextRequest,
@@ -43,13 +52,18 @@ export async function PUT(
       await tx.bookingQuestion.createMany({
         data: questions.map(
           (
-            question: { label: string; placeholder?: string; type?: string; required?: boolean },
+            question: {
+              label: string
+              placeholder?: string
+              type?: unknown
+              required?: boolean
+            },
             index: number
           ) => ({
             eventTypeId: id,
             label: question.label,
             placeholder: question.placeholder || null,
-            type: question.type || "text",
+            type: parseQuestionType(question.type),
             required: question.required || false,
             order: index,
           })
