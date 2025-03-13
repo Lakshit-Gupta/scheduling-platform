@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma"
 import { DEFAULT_USER_ID } from "@/lib/constants"
 import Link from "next/link"
-import { Plus, Link as LinkIcon, Calendar } from "lucide-react"
+import { Plus, Link as LinkIcon, Calendar, ExternalLink } from "lucide-react"
 import EventTypeActions from "./EventTypeActions"
 
 export const dynamic = 'force-dynamic'
@@ -47,7 +47,7 @@ export default async function EventTypesPage() {
                   <span className="sr-only">Edit {et.title}</span>
                 </Link>
 
-                <div className="relative z-0">
+                <div className="relative">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2.5">
@@ -68,7 +68,16 @@ export default async function EventTypesPage() {
                     <div className="flex items-center gap-1.5 text-neutral-400">
                       <LinkIcon className="h-3.5 w-3.5 shrink-0" />
                       <span className="text-neutral-500">Public URL</span>
-                      <span className="max-w-[180px] truncate text-neutral-300">/{et.slug}</span>
+                      <Link
+                        href={`/${et.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative z-20 inline-flex max-w-[180px] items-center gap-1 truncate text-xs text-neutral-500 transition-colors hover:text-neutral-300"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <ExternalLink className="h-3 w-3 shrink-0" />
+                        <span className="truncate">/{et.slug}</span>
+                      </Link>
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="inline-flex items-center gap-1.5 text-neutral-400">

@@ -2,7 +2,8 @@ import prisma from "@/lib/prisma"
 import { DEFAULT_USER_ID } from "@/lib/constants"
 import Badge from "@/components/ui/Badge"
 import { formatTime, formatDate } from "@/lib/utils"
-import { Calendar, TrendingUp, Link as LinkIcon, CheckCircle } from "lucide-react"
+import Link from "next/link"
+import { Calendar, TrendingUp, Link as LinkIcon, CheckCircle, Plus, Clock, ExternalLink } from "lucide-react"
 
 export const dynamic = 'force-dynamic'
 
@@ -37,6 +38,35 @@ export default async function DashboardPage() {
             <p className="mt-2 text-3xl font-bold tracking-tight text-neutral-100">{stat.value}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-6 rounded-xl border border-neutral-700 bg-neutral-800/50 p-5">
+        <h2 className="mb-4 text-sm font-semibold text-neutral-100">Quick Actions</h2>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/dashboard/event-types/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 transition-colors hover:bg-neutral-600"
+          >
+            <Plus className="h-4 w-4" />
+            New Event Type
+          </Link>
+          <Link
+            href="/dashboard/availability"
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 transition-colors hover:bg-neutral-600"
+          >
+            <Clock className="h-4 w-4" />
+            Set Availability
+          </Link>
+          <Link
+            href="/lakshit-gupta"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 transition-colors hover:bg-neutral-600"
+          >
+            <ExternalLink className="h-4 w-4" />
+            View Public Page
+          </Link>
+        </div>
       </div>
 
       <div className="mt-8">
