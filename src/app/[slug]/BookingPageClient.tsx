@@ -101,7 +101,7 @@ export default function BookingPageClient({
     .slice(0, 2)
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#0f0f0f] p-4 md:flex md:items-center md:justify-center">
+    <div className="min-h-screen bg-[#0f0f0f] overflow-x-hidden p-4 md:flex md:items-center md:justify-center">
       <div className="mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900 shadow-sm md:flex-row">
         {/* Left Panel */}
         <div className="w-full border-b border-neutral-700 p-6 md:w-72 md:border-b-0 md:border-r md:p-8">

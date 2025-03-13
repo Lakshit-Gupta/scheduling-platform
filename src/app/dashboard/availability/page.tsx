@@ -61,8 +61,8 @@ export default function AvailabilityPage() {
       <div className="mt-8 max-w-2xl">
           <div className="overflow-hidden rounded-xl border border-neutral-700 bg-neutral-800 shadow-sm">
             {days.map((day, index) => (
-              <div key={day.dayOfWeek} className="flex flex-col gap-3 border-b border-neutral-700 px-6 py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-[140px] items-center gap-3">
+              <div key={day.dayOfWeek} className="flex flex-col sm:flex-row sm:items-center gap-3 py-3 border-b border-neutral-700 px-6 last:border-0 sm:justify-between">
+                <div className="flex items-center gap-3 min-w-[140px]">
                   <Switch.Root checked={day.enabled} onCheckedChange={(checked) => updateDay(index, { enabled: checked })}
                     className="relative h-[22px] w-[42px] cursor-pointer rounded-full bg-neutral-600 transition-colors data-[state=checked]:bg-white">
                   <Switch.Thumb className="block h-[18px] w-[18px] translate-x-0.5 rounded-full bg-neutral-900 shadow-sm transition-transform data-[state=checked]:translate-x-[22px]" />
@@ -72,10 +72,10 @@ export default function AvailabilityPage() {
                 {day.enabled ? (
                   <div className="flex flex-wrap items-center gap-2">
                     <input type="time" value={day.startTime} onChange={(e) => updateDay(index, { startTime: e.target.value })}
-                    className="w-[120px] rounded-lg border border-neutral-600 bg-neutral-800 px-2 py-1.5 text-sm text-neutral-100 focus:border-neutral-500 focus:outline-none" />
+                    className="w-[120px] rounded-lg border border-neutral-600 bg-neutral-800 px-2 py-1.5 text-sm text-neutral-100 focus:outline-none focus:border-neutral-500" />
                   <span className="text-sm text-neutral-500">to</span>
                   <input type="time" value={day.endTime} onChange={(e) => updateDay(index, { endTime: e.target.value })}
-                    className="w-[120px] rounded-lg border border-neutral-600 bg-neutral-800 px-2 py-1.5 text-sm text-neutral-100 focus:border-neutral-500 focus:outline-none" />
+                    className="w-[120px] rounded-lg border border-neutral-600 bg-neutral-800 px-2 py-1.5 text-sm text-neutral-100 focus:outline-none focus:border-neutral-500" />
                 </div>
               ) : (<span className="text-sm text-neutral-500">Unavailable</span>)}
             </div>

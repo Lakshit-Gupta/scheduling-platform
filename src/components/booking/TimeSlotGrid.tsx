@@ -15,7 +15,7 @@ export default function TimeSlotGrid({
 }: TimeSlotGridProps) {
   if (slots.length === 0) {
     return (
-      <p className="text-sm text-gray-500">No available slots for this date.</p>
+      <p className="text-sm text-neutral-500">No available slots for this date.</p>
     )
   }
 
@@ -38,8 +38,8 @@ export default function TimeSlotGrid({
           className={cn(
             "rounded-lg border px-3 py-2.5 text-sm font-medium transition-all duration-150",
             selectedSlot === slot
-              ? "border-gray-900 bg-gray-900 text-white"
-              : "border-gray-200 bg-white text-gray-900 hover:border-gray-900 hover:bg-gray-50"
+              ? "border-white bg-white text-neutral-900"
+              : "border-neutral-600 bg-neutral-800 text-neutral-100 hover:border-neutral-400 hover:bg-neutral-700"
           )}
         >
           {formatSlotTime(slot)}
