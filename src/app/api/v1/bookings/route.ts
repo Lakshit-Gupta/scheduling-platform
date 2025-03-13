@@ -112,15 +112,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    void sendBookingConfirmationEmail({
+    void sendBookingConfirmationEmail(booking.bookerEmail, {
       bookerName: booking.bookerName,
-      bookerEmail: booking.bookerEmail,
       eventTitle: eventType.title,
       hostName: eventType.user?.name ?? "Host",
       startTime: booking.startTime,
-      endTime: booking.endTime,
-    }).catch((error) => {
-      console.error("Email error:", error)
     })
 
     return NextResponse.json(booking, { status: 201 })
