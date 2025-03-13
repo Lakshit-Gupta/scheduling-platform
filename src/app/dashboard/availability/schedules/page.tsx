@@ -57,17 +57,17 @@ export default function SchedulesPage() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="font-cal text-2xl text-gray-900">
+            <h1 className="font-cal text-2xl text-neutral-100">
               Availability Schedules
             </h1>
-            <p className="mt-1 text-gray-500">
+            <p className="mt-1 text-neutral-500">
               Manage multiple schedules for different situations.
             </p>
           </div>
         </div>
 
-        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6">
-          <h2 className="mb-4 text-sm font-semibold text-gray-900">
+        <div className="mb-6 rounded-xl border border-neutral-700 bg-neutral-800 p-6">
+          <h2 className="mb-4 text-sm font-semibold text-neutral-100">
             Create New Schedule
           </h2>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -76,7 +76,7 @@ export default function SchedulesPage() {
               placeholder="Schedule name (e.g. Office Hours, Consulting)"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
             />
             <Button
               variant="primary"
@@ -89,18 +89,18 @@ export default function SchedulesPage() {
         </div>
 
         {loading ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-sm text-neutral-500">Loading...</p>
         ) : (
           <div className="space-y-4">
             {schedules.map((s) => (
               <div
                 key={s.id}
-                className="rounded-xl border border-gray-200 bg-white p-6"
+                className="rounded-xl border border-neutral-700 bg-neutral-800 p-6"
               >
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{s.name}</h3>
-                    <p className="text-sm text-gray-500">
+                    <h3 className="font-semibold text-neutral-100">{s.name}</h3>
+                    <p className="text-sm text-neutral-500">
                       {s.timezone} · {s.availability?.length || 0} active days
                     </p>
                   </div>
@@ -114,7 +114,7 @@ export default function SchedulesPage() {
                       </button>
                     )}
                     {s.isDefault && (
-                      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                      <span className="rounded-full bg-blue-500/15 px-2 py-1 text-xs font-medium text-blue-300">
                         Default
                       </span>
                     )}
@@ -128,8 +128,8 @@ export default function SchedulesPage() {
                         key={i}
                         className={`rounded-lg px-3 py-1.5 text-xs font-medium ${
                           avail
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-gray-100 text-gray-400"
+                            ? "bg-blue-500/15 text-blue-300"
+                            : "bg-neutral-700 text-neutral-500"
                         }`}
                       >
                         {day}

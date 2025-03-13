@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
 
 type BookingQuestionType = "TEXT" | "NUMBER" | "SELECT" | "CHECKBOX"
@@ -44,6 +43,7 @@ export default function BookingForm({
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [notes, setNotes] = useState("")
+  const inputClass = "w-full rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:border-neutral-500 focus:outline-none"
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -52,29 +52,35 @@ export default function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        label="Full Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        required
-        placeholder="John Doe"
-      />
-      <Input
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        placeholder="john@example.com"
-      />
       <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-neutral-300">Full Name</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          placeholder="John Doe"
+          className={inputClass}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium text-neutral-300">Email</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="john@example.com"
+          className={inputClass}
+        />
+      </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium text-neutral-300">
           Notes (optional)
         </label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all duration-150"
+          className={inputClass}
           rows={3}
           placeholder="Any additional info..."
         />
@@ -84,12 +90,12 @@ export default function BookingForm({
 
         return (
           <div key={question.id} className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-neutral-300">
               {question.label}
               {question.required ? " *" : ""}
             </label>
             {questionType === "CHECKBOX" ? (
-              <label className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900">
+              <label className="inline-flex items-center gap-2 rounded-lg border border-neutral-600 bg-neutral-800 px-3 py-2 text-sm text-neutral-100">
                 <input
                   type="checkbox"
                   checked={answers[question.id] === "true"}
@@ -101,12 +107,13 @@ export default function BookingForm({
                 {question.placeholder || "Select"}
               </label>
             ) : (
-              <Input
+              <input
                 type={questionType === "NUMBER" ? "number" : "text"}
                 value={answers[question.id] || ""}
                 onChange={(e) => onAnswerChange?.(question.id, e.target.value)}
                 placeholder={question.placeholder || "Your answer"}
                 required={question.required}
+                className={inputClass}
               />
             )}
           </div>
