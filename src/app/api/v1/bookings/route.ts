@@ -58,20 +58,23 @@ export async function POST(request: NextRequest) {
 
   const start = new Date(startTime)
   const end = new Date(start.getTime() + eventType.duration * 60 * 1000)
+  const bufferMs = (eventType.bufferMinutes || 0) * 60 * 1000
 
   // Check for conflicting bookings
   const conflict = await prisma.booking.findFirst({
     where: {
       eventTypeId,
       status: "CONFIRMED",
-      startTime: { lt: end },
-      endTime: { gt: start },
+      AND: [
+        { startTime: { lt: new Date(end.getTime() + bufferMs) } },
+        { endTime: { gt: new Date(start.getTime() - bufferMs) } },
+      ],
     },
   })
 
   if (conflict) {
     return NextResponse.json(
-      { error: "This time slot is already booked" },
+      { error: "This time slot is no longer available" },
       { status: 409 }
     )
   }
