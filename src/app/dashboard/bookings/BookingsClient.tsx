@@ -71,7 +71,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
     return (
       <Badge
         variant={status === "CONFIRMED" ? "success" : "danger"}
-        className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium"
+        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap shrink-0"
       >
         {status}
       </Badge>
@@ -144,7 +144,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
 
             return (
               <div key={booking.id} className="px-4 py-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-neutral-100">{booking.bookerName}</p>
                     <p className="mt-0.5 text-xs text-neutral-400">{booking.bookerEmail}</p>
@@ -155,7 +155,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                       {formatTime(new Date(booking.endTime))}
                     </p>
                   </div>
-                  <div className="flex shrink-0 flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap">
                     {renderStatusBadge(booking.status)}
                     {actionButtons}
                   </div>
@@ -194,7 +194,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                   <td className="px-6 py-4">{renderStatusBadge(booking.status)}</td>
                   <td className="px-6 py-4">
                     {actionButtons ? (
-                      <div className="flex shrink-0 flex-wrap items-center gap-2">{actionButtons}</div>
+                      <div className="flex items-center gap-2 shrink-0 flex-wrap">{actionButtons}</div>
                     ) : null}
                   </td>
                 </tr>
