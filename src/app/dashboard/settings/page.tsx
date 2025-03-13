@@ -480,7 +480,7 @@ export default function SettingsPage() {
                       <label className="mb-1.5 block text-sm font-medium text-neutral-300">Hide branding</label>
                       <div className="flex items-center justify-between rounded-lg border border-neutral-700 bg-neutral-900 px-4 py-3">
                         <div>
-                          <p className="text-sm text-neutral-300">Remove "Powered by Cal Clone"</p>
+                          <p className="text-sm text-neutral-300">Remove &quot;Powered by Cal Clone&quot;</p>
                           <p className="text-xs text-neutral-500">Available on Pro plan</p>
                         </div>
                         <Toggle enabled={false} onChange={() => {}} />
