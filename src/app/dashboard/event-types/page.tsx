@@ -47,7 +47,7 @@ export default async function EventTypesPage() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-3">
                       <span className="text-sm font-medium text-neutral-100">{et.title}</span>
-                      <span className="text-xs text-neutral-500">/{et.user?.username || "user"}/{et.slug}</span>
+                      <span className="text-xs text-neutral-500">/{et.slug}</span>
                     </div>
                     <div className="mt-0.5 flex items-center gap-1.5">
                       <span className="inline-flex items-center gap-1 rounded-md border border-neutral-600 bg-neutral-700 px-2 py-0.5 text-xs font-medium text-neutral-400">
