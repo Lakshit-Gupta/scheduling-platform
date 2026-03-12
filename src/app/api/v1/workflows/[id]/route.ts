@@ -1,8 +1,27 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { DEFAULT_USER_ID } from "@/lib/constants"
+import {
+  type Prisma,
+  WorkflowAction,
+  WorkflowTrigger,
+} from "@/generated/prisma/client"
 
 export const dynamic = "force-dynamic"
+
+function parseWorkflowTrigger(value: unknown): WorkflowTrigger | null {
+  if (typeof value !== "string") return null
+  const normalized = value.trim().toUpperCase()
+  if (normalized in WorkflowTrigger) return normalized as WorkflowTrigger
+  return null
+}
+
+function parseWorkflowAction(value: unknown): WorkflowAction | null {
+  if (typeof value !== "string") return null
+  const normalized = value.trim().toUpperCase()
+  if (normalized in WorkflowAction) return normalized as WorkflowAction
+  return null
+}
 
 export async function GET(
   req: Request,
@@ -37,17 +56,39 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await req.json()
+    const data: Prisma.WorkflowUpdateInput = {}
+
+    if (body.title !== undefined) data.title = body.title
+    if (body.description !== undefined) data.description = body.description
+    if (body.isActive !== undefined) data.isActive = body.isActive
+    if (body.timeValue !== undefined) data.timeValue = body.timeValue
+    if (body.timeUnit !== undefined) data.timeUnit = body.timeUnit
+
+    if (body.trigger !== undefined) {
+      const parsedTrigger = parseWorkflowTrigger(body.trigger)
+      if (!parsedTrigger) {
+        return NextResponse.json(
+          { error: "Invalid workflow trigger value" },
+          { status: 400 }
+        )
+      }
+      data.trigger = parsedTrigger
+    }
+
+    if (body.action !== undefined) {
+      const parsedAction = parseWorkflowAction(body.action)
+      if (!parsedAction) {
+        return NextResponse.json(
+          { error: "Invalid workflow action value" },
+          { status: 400 }
+        )
+      }
+      data.action = parsedAction
+    }
+
     const workflow = await prisma.workflow.update({
       where: { id },
-      data: {
-        ...(body.title !== undefined && { title: body.title }),
-        ...(body.description !== undefined && { description: body.description }),
-        ...(body.isActive !== undefined && { isActive: body.isActive }),
-        ...(body.trigger !== undefined && { trigger: body.trigger }),
-        ...(body.action !== undefined && { action: body.action }),
-        ...(body.timeValue !== undefined && { timeValue: body.timeValue }),
-        ...(body.timeUnit !== undefined && { timeUnit: body.timeUnit }),
-      },
+      data,
     })
     return NextResponse.json(workflow)
   } catch (error) {

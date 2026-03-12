@@ -6,20 +6,19 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
 const triggers = [
-  { value: "BEFORE_EVENT", label: "Before Event" },
-  { value: "AFTER_EVENT", label: "After Event" },
-  { value: "NEW_EVENT", label: "New Event Booked" },
-  { value: "CANCELLED_EVENT", label: "Event Cancelled" },
-  { value: "RESCHEDULED_EVENT", label: "Event Rescheduled" },
-]
+  { value: "NEW_BOOKING", label: "New Booking" },
+  { value: "CANCEL_BOOKING", label: "Booking Cancelled" },
+  { value: "RESCHEDULE_BOOKING", label: "Booking Rescheduled" },
+] as const
 
 const actions = [
-  { value: "EMAIL_REMINDER", label: "Send Email Reminder" },
-  { value: "SMS_REMINDER", label: "Send SMS Reminder" },
+  { value: "SEND_EMAIL", label: "Send Email" },
+  { value: "SEND_SMS", label: "Send SMS" },
   { value: "WEBHOOK", label: "Trigger Webhook" },
-  { value: "EMAIL_ATTENDEE", label: "Email Attendee" },
-  { value: "SMS_ATTENDEE", label: "SMS Attendee" },
-]
+] as const
+
+type WorkflowTriggerValue = (typeof triggers)[number]["value"]
+type WorkflowActionValue = (typeof actions)[number]["value"]
 
 export default function NewWorkflowPage() {
   const router = useRouter()
@@ -27,8 +26,8 @@ export default function NewWorkflowPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    trigger: "BEFORE_EVENT",
-    action: "EMAIL_REMINDER",
+    trigger: "NEW_BOOKING" as WorkflowTriggerValue,
+    action: "SEND_EMAIL" as WorkflowActionValue,
     timeValue: 24,
     timeUnit: "HOURS",
   })
@@ -83,7 +82,12 @@ export default function NewWorkflowPage() {
           <label className="mb-1.5 block text-sm font-medium text-neutral-300">Trigger</label>
           <select
             value={form.trigger}
-            onChange={(e) => setForm((p) => ({ ...p, trigger: e.target.value }))}
+            onChange={(e) =>
+              setForm((p) => ({
+                ...p,
+                trigger: e.target.value as WorkflowTriggerValue,
+              }))
+            }
             className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-sm text-neutral-100 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
           >
             {triggers.map((t) => (
@@ -97,7 +101,12 @@ export default function NewWorkflowPage() {
           <label className="mb-1.5 block text-sm font-medium text-neutral-300">Action</label>
           <select
             value={form.action}
-            onChange={(e) => setForm((p) => ({ ...p, action: e.target.value }))}
+            onChange={(e) =>
+              setForm((p) => ({
+                ...p,
+                action: e.target.value as WorkflowActionValue,
+              }))
+            }
             className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2.5 text-sm text-neutral-100 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
           >
             {actions.map((a) => (

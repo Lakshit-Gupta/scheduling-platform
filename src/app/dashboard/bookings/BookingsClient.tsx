@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import { Calendar } from "lucide-react"
+import { Calendar, X } from "lucide-react"
 import Badge from "@/components/ui/Badge"
 import { cn } from "@/lib/utils"
 import { formatDate, formatTime } from "@/lib/utils"
 import RescheduleModal from "@/components/dashboard/RescheduleModal"
-import CancelBookingButton from "./CancelBookingButton"
+import { toast } from "@/components/ui/Toast"
 
 interface BookingsClientProps {
   bookings: Booking[]
@@ -32,6 +32,22 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
   const router = useRouter()
   const now = new Date()
   const [rescheduleBooking, setRescheduleBooking] = useState<Booking | null>(null)
+  const [confirmingId, setConfirmingId] = useState<string | null>(null)
+  const [cancellingId, setCancellingId] = useState<string | null>(null)
+
+  async function handleCancel(bookingId: string) {
+    setCancellingId(bookingId)
+    const res = await fetch(`/api/v1/bookings/${bookingId}`, { method: "PATCH" })
+    if (!res.ok) {
+      toast("Failed to cancel booking", "error")
+      setCancellingId(null)
+      return
+    }
+    toast("Booking cancelled", "success")
+    setConfirmingId(null)
+    setCancellingId(null)
+    router.refresh()
+  }
 
   const upcoming = bookings.filter(
     (booking) => booking.status === "CONFIRMED" && new Date(booking.startTime) >= now
@@ -97,7 +113,32 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                 <td className="px-6 py-4">
                   {booking.status === "CONFIRMED" && new Date(booking.startTime) >= now && (
                     <div className="flex items-center gap-3">
-                      <CancelBookingButton id={booking.id} />
+                      {confirmingId === booking.id ? (
+                        <div className="inline-flex items-center gap-2 rounded-lg px-2.5 py-1.5">
+                          <button
+                            onClick={() => handleCancel(booking.id)}
+                            disabled={cancellingId === booking.id}
+                            className="text-xs font-medium text-red-400 transition-colors hover:text-red-300 disabled:opacity-50"
+                          >
+                            {cancellingId === booking.id ? "..." : "Confirm"}
+                          </button>
+                          <button
+                            onClick={() => setConfirmingId(null)}
+                            disabled={cancellingId === booking.id}
+                            className="text-xs text-neutral-500 transition-colors hover:text-neutral-300 disabled:opacity-50"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmingId(booking.id)}
+                          className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] text-neutral-400 transition-all duration-150 hover:bg-red-500/10 hover:text-red-400"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          Cancel
+                        </button>
+                      )}
                       <button
                         onClick={() => setRescheduleBooking(booking)}
                         className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
