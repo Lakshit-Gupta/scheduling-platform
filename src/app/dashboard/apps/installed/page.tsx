@@ -2,115 +2,175 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { BarChart3, Sparkles, Calendar, Video, LayoutGrid, MessageSquare, CreditCard, Boxes, Plus, ChevronDown, MoreHorizontal } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { X, Check, ExternalLink } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 
-const sidebarCategories = [
-  { id: "calendar", label: "Calendar", icon: Calendar },
-  { id: "analytics", label: "Analytics", icon: BarChart3 },
-  { id: "ai-automation", label: "AI & Automation", icon: Sparkles },
-  { id: "conferencing", label: "Conferencing", icon: Video },
-  { id: "crm", label: "CRM", icon: LayoutGrid },
-  { id: "messaging", label: "Messaging", icon: MessageSquare },
-  { id: "payment", label: "Payment", icon: CreditCard },
-  { id: "other", label: "Other", icon: Boxes },
+const tabs = [
+  "Calendar", "Analytics", "AI & Automation", "Conferencing", "CRM", "Messaging", "Payment", "Other",
 ]
 
-interface ConnectedCalendar { name: string; email: string; icon: string; subCalendars: { name: string; enabled: boolean }[] }
-
-const connectedCalendars: ConnectedCalendar[] = [
-  { name: "Google Calendar", email: "user@example.com", icon: "/assets/app-store/googlecalendar_icon.svg",
-    subCalendars: [{ name: "user@example.com", enabled: true }, { name: "Family", enabled: false }] },
+const allApps = [
+  { name: "Google Calendar", icon: "/assets/app-store/googlecalendar_icon.svg", description: "Sync your Cal.com bookings with Google Calendar automatically.", category: "Calendar" },
+  { name: "Office 365 Calendar", icon: "/assets/app-store/office365calendar_icon.svg", description: "Sync your Cal.com bookings with Microsoft Office 365 Calendar.", category: "Calendar" },
+  { name: "Zapier", icon: "/assets/app-store/zapier_icon.svg", description: "Connect Cal.com to thousands of apps via Zapier automations.", category: "AI & Automation" },
+  { name: "Make", icon: "/assets/app-store/make_icon.svg", description: "Automate workflows and integrate Cal.com with Make.", category: "AI & Automation" },
+  { name: "n8n", icon: "/assets/app-store/n8n_icon.svg", description: "Workflow automation tool. Connect Cal.com with hundreds of integrations.", category: "AI & Automation" },
+  { name: "Pipedream", icon: "/assets/app-store/pipedream_icon.svg", description: "Connect Cal.com with 1000+ apps using Pipedream.", category: "AI & Automation" },
+  { name: "Google Meet", icon: "/assets/icons/apps/google-meet.svg", description: "Automatically add Google Meet links to your bookings.", category: "Conferencing" },
+  { name: "Zoom Video", icon: "/assets/app-store/zoomvideo_icon.svg", description: "Add Zoom meeting links automatically to your bookings.", category: "Conferencing" },
+  { name: "Jitsi Video", icon: "/assets/app-store/jitsivideo_icon.svg", description: "Add Jitsi meeting links to your bookings automatically.", category: "Conferencing" },
+  { name: "Office 365 Video", icon: "/assets/app-store/office365video_icon.svg", description: "Add Microsoft Teams meeting links to your bookings.", category: "Conferencing" },
+  { name: "HubSpot", icon: "/assets/app-store/hubspot_icon.svg", description: "Sync your bookings with HubSpot CRM.", category: "CRM" },
+  { name: "Salesforce", icon: "/assets/app-store/salesforce_icon.png", description: "Sync Cal.com bookings with Salesforce CRM.", category: "CRM" },
+  { name: "Close.com", icon: "/assets/app-store/closecom_icon.svg", description: "Sync your Cal.com bookings with Close CRM.", category: "CRM" },
+  { name: "WhatsApp", icon: "/assets/app-store/whatsapp_icon.svg", description: "Send WhatsApp notifications to attendees.", category: "Messaging" },
+  { name: "Telegram", icon: "/assets/app-store/telegram_icon.svg", description: "Send Telegram messages to attendees.", category: "Messaging" },
+  { name: "Discord", icon: "/assets/app-store/discord_icon.svg", description: "Send Discord notifications for booking events.", category: "Messaging" },
+  { name: "Stripe", icon: "/assets/app-store/stripepayment_icon.svg", description: "Accept payments via Stripe for your bookings.", category: "Payment" },
+  { name: "PayPal", icon: "/assets/app-store/paypal_icon.svg", description: "Accept PayPal payments for your bookings.", category: "Payment" },
 ]
+
+interface App { name: string; icon: string; description: string; category: string }
+
+function AppDetailModal({ app, onClose }: { app: App; onClose: () => void }) {
+  const [connected, setConnected] = useState(false)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.92, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.92, y: 20 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        className="w-full max-w-md rounded-2xl border border-neutral-700 bg-neutral-800 p-6 shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="mb-5 flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-neutral-600 bg-neutral-700 p-2">
+              <Image src={app.icon} alt={app.name} width={36} height={36} className="object-contain" unoptimized />
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-neutral-100">{app.name}</h3>
+              <span className="text-xs text-neutral-500">{app.category}</span>
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-neutral-500 transition-colors hover:bg-neutral-700 hover:text-neutral-100">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <p className="mb-6 text-sm leading-relaxed text-neutral-400">{app.description}</p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setConnected(!connected)}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all ${
+              connected ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400" : "bg-neutral-100 text-neutral-900 hover:bg-white"
+            }`}
+          >
+            {connected ? <><Check className="h-4 w-4" />Connected</> : "Connect"}
+          </button>
+          <button className="flex items-center gap-1.5 rounded-lg border border-neutral-600 px-4 py-2.5 text-sm font-medium text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-neutral-100">
+            <ExternalLink className="h-3.5 w-3.5" />Learn more
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
 
 export default function InstalledAppsPage() {
-  const [activeCategory, setActiveCategory] = useState("calendar")
-  const [calendars, setCalendars] = useState(connectedCalendars)
+  const [activeTab, setActiveTab] = useState("Calendar")
+  const [selectedApp, setSelectedApp] = useState<App | null>(null)
 
-  const toggleCalendar = (calIndex: number, subIndex: number) => {
-    setCalendars((prev) => {
-      const next = [...prev]; const cal = { ...next[calIndex] }; const subs = [...cal.subCalendars]
-      subs[subIndex] = { ...subs[subIndex], enabled: !subs[subIndex].enabled }
-      cal.subCalendars = subs; next[calIndex] = cal; return next
-    })
-  }
+  const filteredApps = allApps.filter((app) => app.category === activeTab)
 
   return (
     <div className="px-6 py-8 md:px-8">
-      <h1 className="font-cal text-[28px] text-fg">Installed apps</h1>
-      <p className="mt-1 text-sm text-muted">Manage your installed apps or change settings</p>
+      <div className="mb-6">
+        <h1 className="font-cal text-[28px] text-neutral-100">Installed Apps</h1>
+        <p className="mt-1 text-sm text-neutral-400">Manage your connected integrations.</p>
+      </div>
 
-      <div className="mt-8 flex gap-8">
-        <nav className="hidden w-48 shrink-0 flex-col gap-0.5 md:flex">
-          {sidebarCategories.map((cat) => (
-            <button key={cat.id} onClick={() => setActiveCategory(cat.id)}
-              className={cn("flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium transition-all text-left",
-                activeCategory === cat.id ? "bg-card text-fg" : "text-muted hover:bg-card hover:text-fg"
-              )}>
-              <cat.icon className="h-4 w-4" />{cat.label}
+      <div className="mb-6 border-b border-neutral-700">
+        <nav className="-mb-px flex gap-1 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "relative whitespace-nowrap px-4 pb-3 text-sm font-medium transition-colors",
+                activeTab === tab ? "text-neutral-100" : "text-neutral-500 hover:text-neutral-300",
+              )}
+            >
+              {tab}
+              {activeTab === tab && (
+                <motion.div
+                  layoutId="installed-tab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-100"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
             </button>
           ))}
         </nav>
-
-        <div className="flex-1 min-w-0">
-          <AnimatePresence mode="wait">
-            {activeCategory === "calendar" && (
-              <motion.div key="calendar" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.2 }}>
-                <div className="flex items-center justify-between">
-                  <div><h2 className="font-cal text-xl text-fg">Calendars</h2><p className="mt-0.5 text-sm text-muted">Configure how your event types interact with your calendars</p></div>
-                  <button className="inline-flex items-center gap-2 rounded-lg border border-surface-hover bg-surface px-4 py-2 text-sm font-medium text-muted transition-all hover:bg-surface-hover hover:text-fg"><Plus className="h-4 w-4" />Add calendar</button>
-                </div>
-
-                <div className="mt-6 rounded-xl border border-line bg-card p-6 shadow-sm">
-                  <h3 className="text-sm font-semibold text-fg">Add to calendar</h3>
-                  <p className="mt-1 text-xs text-muted">Select where to add events when you&apos;re booked.</p>
-                  <div className="mt-4"><label className="text-xs font-medium text-muted">Add events to</label>
-                    <div className="mt-1.5 flex items-center gap-2 rounded-lg border border-surface-hover bg-surface px-4 py-2.5">
-                      <span className="text-sm text-fg">user@example.com</span><span className="text-sm text-dim">(Google)</span><ChevronDown className="ml-auto h-4 w-4 text-dim" />
-                    </div></div>
-                </div>
-
-                <div className="mt-4 rounded-xl border border-line bg-card p-6 shadow-sm">
-                  <h3 className="text-sm font-semibold text-fg">Check for conflicts</h3>
-                  <p className="mt-1 text-xs text-muted">Select which calendars to check for conflicts.</p>
-                  {calendars.map((cal, calIndex) => (
-                    <div key={cal.name} className="mt-4 rounded-xl border border-surface-hover bg-card-hover p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 overflow-hidden rounded-lg border border-surface-hover bg-surface p-1.5"><Image src={cal.icon} alt={cal.name} width={28} height={28} /></div>
-                        <div className="flex-1 min-w-0"><p className="text-sm font-medium text-fg">{cal.name}</p><p className="text-xs text-dim">{cal.email}</p></div>
-                        <button className="rounded-lg p-1.5 text-dim hover:bg-surface hover:text-fg"><MoreHorizontal className="h-4 w-4" /></button>
-                      </div>
-                      <div className="mt-3 space-y-2">
-                        {cal.subCalendars.map((sub, subIndex) => (
-                          <div key={sub.name} className="flex items-center gap-3">
-                            <button onClick={() => toggleCalendar(calIndex, subIndex)}
-                              className={cn("relative h-5 w-9 rounded-full transition-colors duration-200", sub.enabled ? "bg-primary-btn" : "bg-surface-hover")}>
-                              <motion.div layout className="absolute top-0.5 h-4 w-4 rounded-full shadow-sm"
-                                style={{ left: sub.enabled ? 18 : 2, backgroundColor: sub.enabled ? "#1c1c1c" : "#666" }}
-                                transition={{ type: "spring", stiffness: 500, damping: 30 }} />
-                            </button>
-                            <span className="text-sm text-muted">{sub.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-            {activeCategory !== "calendar" && (
-              <motion.div key={activeCategory} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} transition={{ duration: 0.2 }} className="flex flex-col items-center justify-center py-20">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface">
-                  {(() => { const cat = sidebarCategories.find((c) => c.id === activeCategory); return cat ? <cat.icon className="h-7 w-7 text-dim" /> : null })()}
-                </div>
-                <p className="mt-4 text-sm font-medium text-fg">No {sidebarCategories.find((c) => c.id === activeCategory)?.label} apps installed</p>
-                <p className="mt-1 text-sm text-muted">Browse the App Store to find and install apps.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
       </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.15 }}
+        >
+          {filteredApps.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border border-neutral-700 bg-neutral-800 py-20 text-center">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-700">
+                <span className="text-2xl">📦</span>
+              </div>
+              <p className="text-sm font-medium text-neutral-400">No {activeTab} apps installed</p>
+              <p className="mt-1 text-xs text-neutral-600">Visit the App Store to connect integrations.</p>
+              <a
+                href="/dashboard/apps/store"
+                className="mt-4 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-300 transition-colors hover:bg-neutral-600 hover:text-neutral-100"
+              >
+                Browse App Store
+              </a>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredApps.map((app) => (
+                <motion.div
+                  key={app.name}
+                  whileHover={{ y: -3 }}
+                  className="cursor-pointer rounded-xl border border-neutral-700 bg-neutral-800 p-5 shadow-sm transition-all hover:border-neutral-600"
+                  onClick={() => setSelectedApp(app)}
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-neutral-600 bg-neutral-700 p-2">
+                    <Image src={app.icon} alt={app.name} width={32} height={32} className="object-contain" unoptimized />
+                  </div>
+                  <h3 className="text-sm font-semibold text-neutral-100">{app.name}</h3>
+                  <p className="mt-1.5 flex-1 line-clamp-2 text-xs leading-relaxed text-neutral-400">{app.description}</p>
+                  <button className="mt-4 w-full rounded-lg border border-neutral-600 bg-neutral-700 py-2 text-xs font-medium text-neutral-400 transition-all hover:bg-neutral-600 hover:text-neutral-100">
+                    Manage
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedApp && <AppDetailModal app={selectedApp} onClose={() => setSelectedApp(null)} />}
+      </AnimatePresence>
     </div>
   )
 }
