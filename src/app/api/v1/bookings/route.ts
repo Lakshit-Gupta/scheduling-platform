@@ -1,0 +1,116 @@
+import { NextRequest, NextResponse } from "next/server"
+import prisma from "@/lib/prisma"
+import { DEFAULT_USER_ID } from "@/lib/constants"
+import { sendBookingConfirmationEmail } from "@/lib/email"
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const status = searchParams.get("status")
+
+  const now = new Date()
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: any = {
+    eventType: { userId: DEFAULT_USER_ID },
+  }
+
+  if (status === "upcoming") {
+    where.status = "CONFIRMED"
+    where.startTime = { gte: now }
+  } else if (status === "past") {
+    where.status = "CONFIRMED"
+    where.startTime = { lt: now }
+  } else if (status === "cancelled") {
+    where.status = "CANCELLED"
+  }
+
+  const bookings = await prisma.booking.findMany({
+    where,
+    include: { eventType: true },
+    orderBy: { startTime: "asc" },
+  })
+
+  return NextResponse.json(bookings)
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json()
+  const { eventTypeId, bookerName, bookerEmail, startTime, notes, answers } = body
+
+  if (!eventTypeId || !bookerName || !bookerEmail || !startTime) {
+    return NextResponse.json(
+      { error: "eventTypeId, bookerName, bookerEmail, and startTime are required" },
+      { status: 400 }
+    )
+  }
+
+  const eventType = await prisma.eventType.findUnique({
+    where: { id: eventTypeId },
+    include: { user: true },
+  })
+
+  if (!eventType) {
+    return NextResponse.json(
+      { error: "Event type not found" },
+      { status: 404 }
+    )
+  }
+
+  const start = new Date(startTime)
+  const end = new Date(start.getTime() + eventType.duration * 60 * 1000)
+
+  // Check for conflicting bookings
+  const conflict = await prisma.booking.findFirst({
+    where: {
+      eventTypeId,
+      status: "CONFIRMED",
+      startTime: { lt: end },
+      endTime: { gt: start },
+    },
+  })
+
+  if (conflict) {
+    return NextResponse.json(
+      { error: "This time slot is already booked" },
+      { status: 409 }
+    )
+  }
+
+  const booking = await prisma.booking.create({
+    data: {
+      eventTypeId,
+      bookerName,
+      bookerEmail,
+      startTime: start,
+      endTime: end,
+      status: "CONFIRMED",
+      notes: notes || null,
+    },
+    include: { eventType: true },
+  })
+
+  if (answers?.length) {
+    await prisma.bookingAnswer.createMany({
+      data: answers.map((item: { questionId: string; answer: string }) => ({
+        bookingId: booking.id,
+        questionId: item.questionId,
+        answer: item.answer,
+      })),
+    })
+  }
+
+  try {
+    await sendBookingConfirmationEmail({
+      bookerName: booking.bookerName,
+      bookerEmail: booking.bookerEmail,
+      eventTitle: eventType.title,
+      hostName: eventType.user?.name ?? "Host",
+      startTime: booking.startTime,
+      endTime: booking.endTime,
+    })
+  } catch (error) {
+    console.error("Email error:", error)
+  }
+
+  return NextResponse.json(booking, { status: 201 })
+}

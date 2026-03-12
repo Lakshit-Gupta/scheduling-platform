@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String                 @id @default(uuid())
+  name         String                 @default("Default User")
+  email        String                 @unique
+  username     String                 @unique
+  bio          String?
+  timezone     String                 @default("Asia/Kolkata")
+  eventTypes   EventType[]
+  availability Availability[]
+  schedules    AvailabilitySchedule[]
+  workflows    Workflow[]
+  createdAt    DateTime               @default(now())
+}
+
+model AvailabilitySchedule {
+  id           String         @id @default(uuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id])
+  name         String         @default("Default Schedule")
+  isDefault    Boolean        @default(false)
+  timezone     String         @default("Asia/Kolkata")
+  availability Availability[]
+  createdAt    DateTime       @default(now())
+
+  @@index([userId])
+}
+
+model EventType {
+  id            String            @id @default(uuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id])
+  title         String
+  description   String?
+  duration      Int
+  slug          String            @unique
+  isActive      Boolean           @default(true)
+  color         String            @default("#3B82F6")
+  bufferMinutes Int               @default(0)
+  bookings      Booking[]
+  questions     BookingQuestion[]
+  overrides     DateOverride[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([slug])
+}
+
+model Availability {
+  id         String                @id @default(uuid())
+  userId     String
+  user       User                  @relation(fields: [userId], references: [id])
+  scheduleId String?
+  schedule   AvailabilitySchedule? @relation(fields: [scheduleId], references: [id])
+  dayOfWeek  Int
+  startTime  String
+  endTime    String
+  timezone   String                @default("Asia/Kolkata")
+
+  @@index([userId])
+  @@index([scheduleId])
+}
+
+model BookingQuestion {
+  id          String          @id @default(uuid())
+  eventTypeId String
+  eventType   EventType       @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+  label       String
+  placeholder String?
+  type        String          @default("text")
+  required    Boolean         @default(false)
+  order       Int             @default(0)
+  answers     BookingAnswer[]
+  createdAt   DateTime        @default(now())
+
+  @@index([eventTypeId])
+}
+
+model BookingAnswer {
+  id         String          @id @default(uuid())
+  bookingId  String
+  booking    Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  questionId String
+  question   BookingQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answer     String
+
+  @@index([bookingId])
+}
+
+model DateOverride {
+  id          String    @id @default(uuid())
+  eventTypeId String
+  eventType   EventType @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
+  date        DateTime
+  isBlocked   Boolean   @default(false)
+  startTime   String?
+  endTime     String?
+  createdAt   DateTime  @default(now())
+
+  @@index([eventTypeId])
+  @@index([date])
+}
+
+model Booking {
+  id          String          @id @default(uuid())
+  eventTypeId String
+  eventType   EventType       @relation(fields: [eventTypeId], references: [id])
+  bookerName  String
+  bookerEmail String
+  startTime   DateTime
+  endTime     DateTime
+  status      BookingStatus   @default(CONFIRMED)
+  cancelledAt DateTime?
+  notes       String?
+  answers     BookingAnswer[]
+  createdAt   DateTime        @default(now())
+
+  @@index([eventTypeId])
+  @@index([startTime])
+  @@index([status])
+}
+
+model Workflow {
+  id          String         @id @default(uuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
+  title       String
+  description String?
+  isActive    Boolean        @default(true)
+  trigger     String         @default("BEFORE_EVENT")
+  action      String         @default("EMAIL_REMINDER")
+  timeValue   Int            @default(24)
+  timeUnit    String         @default("HOURS")
+  steps       WorkflowStep[]
+  callHistory CallHistory[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([userId])
+}
+
+model WorkflowStep {
+  id         String   @id @default(uuid())
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  stepOrder  Int
+  action     String
+  template   String?
+  createdAt  DateTime @default(now())
+
+  @@index([workflowId])
+}
+
+model CallHistory {
+  id          String    @id @default(uuid())
+  workflowId  String
+  workflow    Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  bookingId   String?
+  callerName  String
+  callerPhone String?
+  callerEmail String?
+  callType    String    @default("OUTGOING")
+  status      String    @default("COMPLETED")
+  duration    Int       @default(0)
+  startedAt   DateTime  @default(now())
+  endedAt     DateTime?
+  notes       String?
+
+  @@index([workflowId])
+  @@index([startedAt])
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
