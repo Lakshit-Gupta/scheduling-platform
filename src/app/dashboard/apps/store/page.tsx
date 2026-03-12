@@ -19,7 +19,7 @@ const categories = [
 
 const popularApps = [
   { name: "Google Calendar", icon: "/assets/app-store/googlecalendar_icon.svg", description: "Google Calendar is a time management and scheduling service developed by Google.", category: "Calendar" },
-  { name: "Google Meet", icon: "/assets/app-store/googlevideo_icon.svg", description: "Google Meet is Google's web-based video conferencing platform.", category: "Conferencing" },
+  { name: "Google Meet", icon: "/assets/icons/apps/google-meet.svg", description: "Google Meet is Google's web-based video conferencing platform.", category: "Conferencing" },
   { name: "Zoom Video", icon: "/assets/app-store/zoomvideo_icon.svg", description: "Zoom is a secure and reliable video platform for all your communication needs.", category: "Conferencing" },
 ]
 
@@ -79,15 +79,7 @@ export default function AppStorePage() {
         <motion.div variants={container} initial="hidden" animate="show" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {popularApps.map((app) => (
             <motion.div key={app.name} variants={item} whileHover={{ y: -3 }} className="group flex flex-col rounded-xl border border-neutral-700 bg-neutral-800 p-5 shadow-sm transition-all hover:border-neutral-600">
-              {app.name === "Google Meet" ? (
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: "linear-gradient(135deg, #00BFA5 0%, #00897B 100%)" }}>
-                  <svg viewBox="0 0 24 24" className="h-7 w-7 fill-white" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z" />
-                  </svg>
-                </div>
-              ) : (
-                <div className="mb-4 h-12 w-12 overflow-hidden rounded-xl border border-neutral-600 bg-neutral-700 p-2"><Image src={app.icon} alt={app.name} width={32} height={32} /></div>
-              )}
+              <div className="mb-4 h-12 w-12 overflow-hidden rounded-xl border border-neutral-600 bg-neutral-700 p-2"><Image src={app.icon} alt={app.name} width={32} height={32} /></div>
               <h3 className="text-sm font-semibold text-neutral-100">{app.name}</h3>
               <p className="mt-1.5 flex-1 text-xs leading-relaxed text-neutral-400 line-clamp-3">{app.description}</p>
               <button className="mt-4 w-full rounded-lg border border-neutral-600 bg-neutral-700 py-2 text-xs font-medium text-neutral-400 transition-all hover:bg-neutral-600 hover:text-neutral-100">Details</button>
