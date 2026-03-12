@@ -5,6 +5,8 @@ import { formatTime, formatDate } from "@/lib/utils"
 import CancelBookingButton from "./CancelBookingButton"
 import BookingsClient from "./BookingsClient"
 
+export const dynamic = 'force-dynamic'
+
 export default async function BookingsPage() {
   const now = new Date()
 

@@ -3,6 +3,8 @@ import { DEFAULT_USER_ID } from "@/lib/constants"
 import Badge from "@/components/ui/Badge"
 import { formatTime, formatDate } from "@/lib/utils"
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const now = new Date()
 

@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma"
 import { formatDate, formatTime } from "@/lib/utils"
 import { CheckCircle } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+
 export default async function ConfirmedPage({
   searchParams,
 }: {

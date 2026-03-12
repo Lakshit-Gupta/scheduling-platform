@@ -4,6 +4,8 @@ import Link from "next/link"
 import { Plus } from "lucide-react"
 import EventTypeActions from "./EventTypeActions"
 
+export const dynamic = 'force-dynamic'
+
 export default async function EventTypesPage() {
   const eventTypes = await prisma.eventType.findMany({
     where: { userId: DEFAULT_USER_ID },

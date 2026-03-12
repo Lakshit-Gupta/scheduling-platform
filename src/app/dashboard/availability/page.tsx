@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import * as Switch from "@radix-ui/react-switch"
 import { DEFAULT_USER_ID } from "@/lib/constants"
 
+export const dynamic = 'force-dynamic'
+
 const DAYS = [
   "Sunday",
   "Monday",
