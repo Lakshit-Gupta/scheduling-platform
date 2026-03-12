@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Scheduling Platform — Cal.com Clone
 
-## Getting Started
+## 🚀 Live Demo
+[Add Vercel URL after deployment]
 
-First, run the development server:
+## ⚡ Quick Start
 
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database (we use Supabase)
+- pnpm
+
+### Setup
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env
+# Fill in DATABASE_URL in .env
+pnpm db:push
+pnpm db:seed
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Docker
+```bash
+docker-compose up --build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 + TypeScript |
+| Database | PostgreSQL (Supabase) |
+| ORM | Prisma 7 |
+| Styling | Tailwind CSS |
+| Deployment | Vercel + Supabase |
 
-## Learn More
+## ✨ Features
+### Core
+- Event type management (create, edit, delete)
+- Availability settings (days + time ranges + timezone)
+- Public booking page with calendar
+- Time slot generation with double-booking prevention
+- Booking confirmation page
+- Bookings dashboard (upcoming, past, cancelled)
+- Cancel bookings
 
-To learn more about Next.js, take a look at the following resources:
+### Bonus
+- Email notifications (Resend API)
+- Buffer time between meetings
+- Responsive design (mobile, tablet, desktop)
+- Timezone support
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📡 API Reference
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | /api/v1/event-types | List all event types |
+| POST | /api/v1/event-types | Create event type |
+| GET | /api/v1/event-types/[id] | Get event type |
+| PUT | /api/v1/event-types/[id] | Update event type |
+| DELETE | /api/v1/event-types/[id] | Delete event type |
+| GET | /api/v1/availability | Get availability |
+| PUT | /api/v1/availability | Update availability |
+| GET | /api/v1/bookings | List bookings |
+| POST | /api/v1/bookings | Create booking |
+| PATCH | /api/v1/bookings/[id] | Cancel booking |
+| GET | /api/v1/slots | Get available slots |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🗄 Database Schema
+4 tables: User, EventType, Availability, Booking
+See prisma/schema.prisma for full schema.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 Assumptions
+- Single default user (no auth required per assignment)
+- Default timezone: Asia/Kolkata
+- Availability applies to all event types equally
+- Slot generation respects buffer time and existing bookings
