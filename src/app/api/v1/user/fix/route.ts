@@ -1,15 +1,23 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
-export async function GET() {
-  const user = await prisma.user.update({
-    where: { id: "default-user-id" },
-    data: {
-      name: "Lakshit Gupta",
-      email: "contact@lakshit.dev",
-      username: "lakshit-gupta",
-    },
-  })
+export const dynamic = "force-dynamic"
 
-  return NextResponse.json(user)
+export async function GET() {
+  try {
+    const users = await prisma.user.findMany()
+
+    const user = await prisma.user.update({
+      where: { id: users[0].id },
+      data: {
+        name: "Lakshit Gupta",
+        email: "contact@lakshit.dev",
+        username: "lakshit-gupta",
+      },
+    })
+
+    return NextResponse.json({ success: true, user })
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message }, { status: 500 })
+  }
 }

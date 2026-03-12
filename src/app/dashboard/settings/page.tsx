@@ -30,16 +30,18 @@ function Toggle({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean
   return (
     <button
       onClick={() => onChange(!enabled)}
+      style={{ minWidth: "36px" }}
       className={cn(
-        "relative h-5 w-9 rounded-full transition-colors duration-200",
+        "relative h-5 w-9 shrink-0 rounded-full transition-colors duration-200",
         enabled ? "bg-neutral-100" : "bg-neutral-600",
       )}
     >
       <motion.span
         animate={{ x: enabled ? 16 : 2 }}
         transition={{ type: "spring", stiffness: 500, damping: 30 }}
+        style={{ position: "absolute", top: "2px", height: "16px", width: "16px" }}
         className={cn(
-          "absolute top-0.5 h-4 w-4 rounded-full transition-colors",
+          "block rounded-full transition-colors",
           enabled ? "bg-neutral-900" : "bg-neutral-400",
         )}
       />
@@ -251,10 +253,10 @@ export default function SettingsPage() {
                 transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
-                <div className="rounded-xl border border-neutral-700 bg-neutral-800 p-6">
+                <div className="rounded-xl border border-neutral-700 bg-neutral-800 p-6 overflow-hidden">
                   <h2 className="mb-1 text-sm font-semibold text-neutral-100">Email Notifications</h2>
                   <p className="mb-5 text-xs text-neutral-500">Choose what you get notified about.</p>
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {[
                       { key: "newBookings", icon: Clock, label: "New bookings", desc: "Get notified when someone books a meeting with you" },
                       { key: "cancellations", icon: AlertTriangle, label: "Cancellations", desc: "Get notified when a booking is cancelled" },
@@ -265,18 +267,16 @@ export default function SettingsPage() {
                       const Icon = item.icon
                       const key = item.key as keyof typeof notifications
                       return (
-                        <div key={item.key} className="flex items-center justify-between gap-4 py-1">
-                          <div className="flex min-w-0 flex-1 items-center gap-3">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-700">
+                        <div key={item.key} className="flex items-center gap-3 w-full">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-700 shrink-0">
                               <Icon className="h-3.5 w-3.5 text-neutral-400" />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-neutral-200">{item.label}</p>
-                              <p className="truncate text-xs text-neutral-500">{item.desc}</p>
-                            </div>
                           </div>
-                          <div className="shrink-0">
-                            <Toggle enabled={notifications[key]} onChange={(v) => setNotifications((p) => ({ ...p, [key]: v }))} />
+                          <div className="flex-1 min-w-0 mr-4">
+                            <p className="text-sm font-medium text-neutral-200">{item.label}</p>
+                            <p className="text-xs text-neutral-500 leading-relaxed">{item.desc}</p>
+                          </div>
+                          <div className="shrink-0 ml-auto">
+                            <Toggle enabled={notifications[key]} onChange={v => setNotifications(p => ({ ...p, [key]: v }))} />
                           </div>
                         </div>
                       )
