@@ -265,17 +265,19 @@ export default function SettingsPage() {
                       const Icon = item.icon
                       const key = item.key as keyof typeof notifications
                       return (
-                        <div key={item.key} className="flex items-center justify-between py-1">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-700">
+                        <div key={item.key} className="flex items-center justify-between gap-4 py-1">
+                          <div className="flex min-w-0 flex-1 items-center gap-3">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-700">
                               <Icon className="h-3.5 w-3.5 text-neutral-400" />
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-neutral-200">{item.label}</p>
-                              <p className="text-xs text-neutral-500">{item.desc}</p>
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium text-neutral-200">{item.label}</p>
+                              <p className="truncate text-xs text-neutral-500">{item.desc}</p>
                             </div>
                           </div>
-                          <Toggle enabled={notifications[key]} onChange={(v) => setNotifications((p) => ({ ...p, [key]: v }))} />
+                          <div className="shrink-0">
+                            <Toggle enabled={notifications[key]} onChange={(v) => setNotifications((p) => ({ ...p, [key]: v }))} />
+                          </div>
                         </div>
                       )
                     })}
