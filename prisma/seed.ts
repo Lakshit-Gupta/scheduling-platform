@@ -3,7 +3,15 @@ import { PrismaPg } from "@prisma/adapter-pg"
 import { Pool } from "pg"
 import "dotenv/config"
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+const dbUrl = new URL(process.env.DATABASE_URL!)
+const pool = new Pool({
+  host: dbUrl.hostname,
+  port: Number(dbUrl.port) || 5432,
+  user: decodeURIComponent(dbUrl.username),
+  password: decodeURIComponent(dbUrl.password),
+  database: dbUrl.pathname.slice(1),
+  ssl: { rejectUnauthorized: false },
+})
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const adapter = new PrismaPg(pool as any)
 const prisma = new PrismaClient({ adapter })
