@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { Plus, Zap, Phone, ArrowUpRight, ArrowDownLeft, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
@@ -33,7 +34,7 @@ export default function WorkflowsPage() {
     <div className="px-6 py-8 md:px-8">
       <div className="flex items-start justify-between gap-4">
         <div><h1 className="font-cal text-[28px] text-fg">Workflows</h1><p className="mt-1 text-sm text-muted">Create workflows to automate notifications and reminders</p></div>
-        <button className="inline-flex items-center gap-2 rounded-lg bg-primary-btn px-4 py-2 text-sm font-medium text-primary-btn-fg shadow-sm transition-all hover:opacity-90"><Plus className="h-4 w-4" />New</button>
+        <Link href="/dashboard/workflows/new" className="inline-flex items-center gap-2 rounded-lg bg-primary-btn px-4 py-2 text-sm font-medium text-primary-btn-fg shadow-sm transition-all hover:opacity-90"><Plus className="h-4 w-4" />New</Link>
       </div>
 
       <div className="mt-6 border-b border-line">
@@ -59,7 +60,7 @@ export default function WorkflowsPage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface"><Zap className="h-6 w-6 text-dim" /></div>
                 <p className="mt-4 text-sm font-medium text-fg">No workflows yet</p>
                 <p className="mt-1 text-sm text-muted">Create your first workflow to automate notifications.</p>
-                <button className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-btn px-4 py-2 text-sm font-medium text-primary-btn-fg shadow-sm transition-all hover:opacity-90"><Plus className="h-4 w-4" />New Workflow</button>
+                <Link href="/dashboard/workflows/new" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-btn px-4 py-2 text-sm font-medium text-primary-btn-fg shadow-sm transition-all hover:opacity-90"><Plus className="h-4 w-4" />New Workflow</Link>
               </div>
             ) : (
               <div className="overflow-hidden rounded-xl border border-line bg-card shadow-sm">

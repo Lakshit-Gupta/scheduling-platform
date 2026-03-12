@@ -66,7 +66,7 @@ export default function AppStorePage() {
         <motion.div variants={container} initial="hidden" animate="show" className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {categories.map((cat) => (
             <motion.div key={cat.name} variants={item} whileHover={{ scale: 1.02, y: -2 }} className="group cursor-pointer rounded-xl border border-neutral-700 bg-neutral-800 p-4 transition-all hover:border-neutral-600 hover:bg-neutral-800/80">
-              <div className="mb-3 h-10 w-10"><Image src={cat.icon} alt={cat.name} width={40} height={40} className="opacity-60 group-hover:opacity-80 transition-opacity" /></div>
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-white p-1.5"><Image src={cat.icon} alt={cat.name} width={28} height={28} /></div>
               <p className="text-sm font-semibold text-neutral-100">{cat.name}</p>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-neutral-500">{cat.count} apps <ChevronRight className="h-3 w-3" /></p>
             </motion.div>
@@ -79,7 +79,15 @@ export default function AppStorePage() {
         <motion.div variants={container} initial="hidden" animate="show" className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {popularApps.map((app) => (
             <motion.div key={app.name} variants={item} whileHover={{ y: -3 }} className="group flex flex-col rounded-xl border border-neutral-700 bg-neutral-800 p-5 shadow-sm transition-all hover:border-neutral-600">
-              <div className="mb-4 h-12 w-12 overflow-hidden rounded-xl border border-neutral-600 bg-neutral-700 p-2"><Image src={app.icon} alt={app.name} width={32} height={32} /></div>
+              {app.name === "Google Meet" ? (
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: "linear-gradient(135deg, #00BFA5 0%, #00897B 100%)" }}>
+                  <svg viewBox="0 0 24 24" className="h-7 w-7 fill-white" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z" />
+                  </svg>
+                </div>
+              ) : (
+                <div className="mb-4 h-12 w-12 overflow-hidden rounded-xl border border-neutral-600 bg-neutral-700 p-2"><Image src={app.icon} alt={app.name} width={32} height={32} /></div>
+              )}
               <h3 className="text-sm font-semibold text-neutral-100">{app.name}</h3>
               <p className="mt-1.5 flex-1 text-xs leading-relaxed text-neutral-400 line-clamp-3">{app.description}</p>
               <button className="mt-4 w-full rounded-lg border border-neutral-600 bg-neutral-700 py-2 text-xs font-medium text-neutral-400 transition-all hover:bg-neutral-600 hover:text-neutral-100">Details</button>
