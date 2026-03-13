@@ -4,6 +4,15 @@ import { DEFAULT_USER_ID } from "@/lib/constants"
 
 export const dynamic = "force-dynamic"
 
+function hasErrorCode(error: unknown): error is { code: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof (error as { code?: unknown }).code === "string"
+  )
+}
+
 export async function GET() {
   try {
     const user = await prisma.user.findUnique({
@@ -38,12 +47,12 @@ export async function PUT(req: Request) {
     })
 
     return NextResponse.json(user)
-  } catch (e: any) {
-    if (e?.code === "P2002") {
+  } catch (error: unknown) {
+    if (hasErrorCode(error) && error.code === "P2002") {
       return NextResponse.json({ error: "Username or email already taken" }, { status: 409 })
     }
 
-    console.error(e)
+    console.error(error)
     return NextResponse.json({ error: "Failed to update user" }, { status: 500 })
   }
 }
