@@ -16,16 +16,11 @@ export async function PATCH(
     include: { eventType: true },
   })
 
-  try {
-    await sendCancellationEmail({
-      bookerName: booking.bookerName,
-      bookerEmail: booking.bookerEmail,
-      eventTitle: booking.eventType.title,
-      startTime: booking.startTime,
-    })
-  } catch (error) {
-    console.error("Email error:", error)
-  }
+  await sendCancellationEmail(booking.bookerEmail, {
+    bookerName: booking.bookerName,
+    eventTitle: booking.eventType.title,
+    startTime: booking.startTime,
+  })
 
   return NextResponse.json(booking)
 }
@@ -93,19 +88,11 @@ export async function PUT(
       include: { eventType: { include: { user: true } } },
     })
 
-    try {
-      await sendRescheduleEmail({
-        bookerName: updated.bookerName,
-        bookerEmail: updated.bookerEmail,
-        eventTitle: updated.eventType.title,
-        hostName: updated.eventType.user?.name ?? "Host",
-        oldStartTime,
-        newStartTime: newStart,
-        newEndTime: newEnd,
-      })
-    } catch (error) {
-      console.error("Reschedule email error:", error)
-    }
+    await sendRescheduleEmail(updated.bookerEmail, {
+      bookerName: updated.bookerName,
+      eventTitle: updated.eventType.title,
+      newStartTime: newStart,
+    })
 
     return NextResponse.json(updated)
   } catch (error) {
