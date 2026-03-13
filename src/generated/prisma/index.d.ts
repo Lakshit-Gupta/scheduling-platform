@@ -73,7 +73,53 @@ export type CallHistory = $Result.DefaultSelection<Prisma.$CallHistoryPayload>
  * Enums
  */
 export namespace $Enums {
-  export const BookingStatus: {
+  export const WorkflowTrigger: {
+  NEW_BOOKING: 'NEW_BOOKING',
+  CANCEL_BOOKING: 'CANCEL_BOOKING',
+  RESCHEDULE_BOOKING: 'RESCHEDULE_BOOKING'
+};
+
+export type WorkflowTrigger = (typeof WorkflowTrigger)[keyof typeof WorkflowTrigger]
+
+
+export const WorkflowAction: {
+  SEND_EMAIL: 'SEND_EMAIL',
+  SEND_SMS: 'SEND_SMS',
+  WEBHOOK: 'WEBHOOK'
+};
+
+export type WorkflowAction = (typeof WorkflowAction)[keyof typeof WorkflowAction]
+
+
+export const CallStatus: {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
+export type CallStatus = (typeof CallStatus)[keyof typeof CallStatus]
+
+
+export const CallType: {
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WEBHOOK: 'WEBHOOK'
+};
+
+export type CallType = (typeof CallType)[keyof typeof CallType]
+
+
+export const QuestionType: {
+  TEXT: 'TEXT',
+  NUMBER: 'NUMBER',
+  SELECT: 'SELECT',
+  CHECKBOX: 'CHECKBOX'
+};
+
+export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType]
+
+
+export const BookingStatus: {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED'
 };
@@ -81,6 +127,26 @@ export namespace $Enums {
 export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
 
 }
+
+export type WorkflowTrigger = $Enums.WorkflowTrigger
+
+export const WorkflowTrigger: typeof $Enums.WorkflowTrigger
+
+export type WorkflowAction = $Enums.WorkflowAction
+
+export const WorkflowAction: typeof $Enums.WorkflowAction
+
+export type CallStatus = $Enums.CallStatus
+
+export const CallStatus: typeof $Enums.CallStatus
+
+export type CallType = $Enums.CallType
+
+export const CallType: typeof $Enums.CallType
+
+export type QuestionType = $Enums.QuestionType
+
+export const QuestionType: typeof $Enums.QuestionType
 
 export type BookingStatus = $Enums.BookingStatus
 
@@ -1963,10 +2029,12 @@ export namespace Prisma {
 
   export type BookingCountOutputType = {
     answers: number
+    callHistory: number
   }
 
   export type BookingCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     answers?: boolean | BookingCountOutputTypeCountAnswersArgs
+    callHistory?: boolean | BookingCountOutputTypeCountCallHistoryArgs
   }
 
   // Custom InputTypes
@@ -1985,6 +2053,13 @@ export namespace Prisma {
    */
   export type BookingCountOutputTypeCountAnswersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: BookingAnswerWhereInput
+  }
+
+  /**
+   * BookingCountOutputType without action
+   */
+  export type BookingCountOutputTypeCountCallHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CallHistoryWhereInput
   }
 
 
@@ -6763,7 +6838,7 @@ export namespace Prisma {
     eventTypeId: string | null
     label: string | null
     placeholder: string | null
-    type: string | null
+    type: $Enums.QuestionType | null
     required: boolean | null
     order: number | null
     createdAt: Date | null
@@ -6774,7 +6849,7 @@ export namespace Prisma {
     eventTypeId: string | null
     label: string | null
     placeholder: string | null
-    type: string | null
+    type: $Enums.QuestionType | null
     required: boolean | null
     order: number | null
     createdAt: Date | null
@@ -6926,7 +7001,7 @@ export namespace Prisma {
     eventTypeId: string
     label: string
     placeholder: string | null
-    type: string
+    type: $Enums.QuestionType
     required: boolean
     order: number
     createdAt: Date
@@ -7024,7 +7099,7 @@ export namespace Prisma {
       eventTypeId: string
       label: string
       placeholder: string | null
-      type: string
+      type: $Enums.QuestionType
       required: boolean
       order: number
       createdAt: Date
@@ -7457,7 +7532,7 @@ export namespace Prisma {
     readonly eventTypeId: FieldRef<"BookingQuestion", 'String'>
     readonly label: FieldRef<"BookingQuestion", 'String'>
     readonly placeholder: FieldRef<"BookingQuestion", 'String'>
-    readonly type: FieldRef<"BookingQuestion", 'String'>
+    readonly type: FieldRef<"BookingQuestion", 'QuestionType'>
     readonly required: FieldRef<"BookingQuestion", 'Boolean'>
     readonly order: FieldRef<"BookingQuestion", 'Int'>
     readonly createdAt: FieldRef<"BookingQuestion", 'DateTime'>
@@ -10257,6 +10332,7 @@ export namespace Prisma {
     createdAt?: boolean
     eventType?: boolean | EventTypeDefaultArgs<ExtArgs>
     answers?: boolean | Booking$answersArgs<ExtArgs>
+    callHistory?: boolean | Booking$callHistoryArgs<ExtArgs>
     _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
@@ -10305,6 +10381,7 @@ export namespace Prisma {
   export type BookingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     eventType?: boolean | EventTypeDefaultArgs<ExtArgs>
     answers?: boolean | Booking$answersArgs<ExtArgs>
+    callHistory?: boolean | Booking$callHistoryArgs<ExtArgs>
     _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10319,6 +10396,7 @@ export namespace Prisma {
     objects: {
       eventType: Prisma.$EventTypePayload<ExtArgs>
       answers: Prisma.$BookingAnswerPayload<ExtArgs>[]
+      callHistory: Prisma.$CallHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10727,6 +10805,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     eventType<T extends EventTypeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventTypeDefaultArgs<ExtArgs>>): Prisma__EventTypeClient<$Result.GetResult<Prisma.$EventTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     answers<T extends Booking$answersArgs<ExtArgs> = {}>(args?: Subset<T, Booking$answersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingAnswerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    callHistory<T extends Booking$callHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Booking$callHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CallHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11191,6 +11270,30 @@ export namespace Prisma {
   }
 
   /**
+   * Booking.callHistory
+   */
+  export type Booking$callHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CallHistory
+     */
+    select?: CallHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CallHistory
+     */
+    omit?: CallHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CallHistoryInclude<ExtArgs> | null
+    where?: CallHistoryWhereInput
+    orderBy?: CallHistoryOrderByWithRelationInput | CallHistoryOrderByWithRelationInput[]
+    cursor?: CallHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CallHistoryScalarFieldEnum | CallHistoryScalarFieldEnum[]
+  }
+
+  /**
    * Booking without action
    */
   export type BookingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11235,8 +11338,8 @@ export namespace Prisma {
     title: string | null
     description: string | null
     isActive: boolean | null
-    trigger: string | null
-    action: string | null
+    trigger: $Enums.WorkflowTrigger | null
+    action: $Enums.WorkflowAction | null
     timeValue: number | null
     timeUnit: string | null
     createdAt: Date | null
@@ -11249,8 +11352,8 @@ export namespace Prisma {
     title: string | null
     description: string | null
     isActive: boolean | null
-    trigger: string | null
-    action: string | null
+    trigger: $Enums.WorkflowTrigger | null
+    action: $Enums.WorkflowAction | null
     timeValue: number | null
     timeUnit: string | null
     createdAt: Date | null
@@ -11416,8 +11519,8 @@ export namespace Prisma {
     title: string
     description: string | null
     isActive: boolean
-    trigger: string
-    action: string
+    trigger: $Enums.WorkflowTrigger
+    action: $Enums.WorkflowAction
     timeValue: number
     timeUnit: string
     createdAt: Date
@@ -11532,8 +11635,8 @@ export namespace Prisma {
       title: string
       description: string | null
       isActive: boolean
-      trigger: string
-      action: string
+      trigger: $Enums.WorkflowTrigger
+      action: $Enums.WorkflowAction
       timeValue: number
       timeUnit: string
       createdAt: Date
@@ -11969,8 +12072,8 @@ export namespace Prisma {
     readonly title: FieldRef<"Workflow", 'String'>
     readonly description: FieldRef<"Workflow", 'String'>
     readonly isActive: FieldRef<"Workflow", 'Boolean'>
-    readonly trigger: FieldRef<"Workflow", 'String'>
-    readonly action: FieldRef<"Workflow", 'String'>
+    readonly trigger: FieldRef<"Workflow", 'WorkflowTrigger'>
+    readonly action: FieldRef<"Workflow", 'WorkflowAction'>
     readonly timeValue: FieldRef<"Workflow", 'Int'>
     readonly timeUnit: FieldRef<"Workflow", 'String'>
     readonly createdAt: FieldRef<"Workflow", 'DateTime'>
@@ -13579,8 +13682,8 @@ export namespace Prisma {
     callerName: string | null
     callerPhone: string | null
     callerEmail: string | null
-    callType: string | null
-    status: string | null
+    callType: $Enums.CallType | null
+    status: $Enums.CallStatus | null
     duration: number | null
     startedAt: Date | null
     endedAt: Date | null
@@ -13594,8 +13697,8 @@ export namespace Prisma {
     callerName: string | null
     callerPhone: string | null
     callerEmail: string | null
-    callType: string | null
-    status: string | null
+    callType: $Enums.CallType | null
+    status: $Enums.CallStatus | null
     duration: number | null
     startedAt: Date | null
     endedAt: Date | null
@@ -13766,8 +13869,8 @@ export namespace Prisma {
     callerName: string
     callerPhone: string | null
     callerEmail: string | null
-    callType: string
-    status: string
+    callType: $Enums.CallType
+    status: $Enums.CallStatus
     duration: number
     startedAt: Date
     endedAt: Date | null
@@ -13807,6 +13910,7 @@ export namespace Prisma {
     endedAt?: boolean
     notes?: boolean
     workflow?: boolean | WorkflowDefaultArgs<ExtArgs>
+    booking?: boolean | CallHistory$bookingArgs<ExtArgs>
   }, ExtArgs["result"]["callHistory"]>
 
   export type CallHistorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13823,6 +13927,7 @@ export namespace Prisma {
     endedAt?: boolean
     notes?: boolean
     workflow?: boolean | WorkflowDefaultArgs<ExtArgs>
+    booking?: boolean | CallHistory$bookingArgs<ExtArgs>
   }, ExtArgs["result"]["callHistory"]>
 
   export type CallHistorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -13839,6 +13944,7 @@ export namespace Prisma {
     endedAt?: boolean
     notes?: boolean
     workflow?: boolean | WorkflowDefaultArgs<ExtArgs>
+    booking?: boolean | CallHistory$bookingArgs<ExtArgs>
   }, ExtArgs["result"]["callHistory"]>
 
   export type CallHistorySelectScalar = {
@@ -13859,18 +13965,22 @@ export namespace Prisma {
   export type CallHistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workflowId" | "bookingId" | "callerName" | "callerPhone" | "callerEmail" | "callType" | "status" | "duration" | "startedAt" | "endedAt" | "notes", ExtArgs["result"]["callHistory"]>
   export type CallHistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workflow?: boolean | WorkflowDefaultArgs<ExtArgs>
+    booking?: boolean | CallHistory$bookingArgs<ExtArgs>
   }
   export type CallHistoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workflow?: boolean | WorkflowDefaultArgs<ExtArgs>
+    booking?: boolean | CallHistory$bookingArgs<ExtArgs>
   }
   export type CallHistoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workflow?: boolean | WorkflowDefaultArgs<ExtArgs>
+    booking?: boolean | CallHistory$bookingArgs<ExtArgs>
   }
 
   export type $CallHistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CallHistory"
     objects: {
       workflow: Prisma.$WorkflowPayload<ExtArgs>
+      booking: Prisma.$BookingPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13879,8 +13989,8 @@ export namespace Prisma {
       callerName: string
       callerPhone: string | null
       callerEmail: string | null
-      callType: string
-      status: string
+      callType: $Enums.CallType
+      status: $Enums.CallStatus
       duration: number
       startedAt: Date
       endedAt: Date | null
@@ -14280,6 +14390,7 @@ export namespace Prisma {
   export interface Prisma__CallHistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     workflow<T extends WorkflowDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkflowDefaultArgs<ExtArgs>>): Prisma__WorkflowClient<$Result.GetResult<Prisma.$WorkflowPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    booking<T extends CallHistory$bookingArgs<ExtArgs> = {}>(args?: Subset<T, CallHistory$bookingArgs<ExtArgs>>): Prisma__BookingClient<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -14315,8 +14426,8 @@ export namespace Prisma {
     readonly callerName: FieldRef<"CallHistory", 'String'>
     readonly callerPhone: FieldRef<"CallHistory", 'String'>
     readonly callerEmail: FieldRef<"CallHistory", 'String'>
-    readonly callType: FieldRef<"CallHistory", 'String'>
-    readonly status: FieldRef<"CallHistory", 'String'>
+    readonly callType: FieldRef<"CallHistory", 'CallType'>
+    readonly status: FieldRef<"CallHistory", 'CallStatus'>
     readonly duration: FieldRef<"CallHistory", 'Int'>
     readonly startedAt: FieldRef<"CallHistory", 'DateTime'>
     readonly endedAt: FieldRef<"CallHistory", 'DateTime'>
@@ -14722,6 +14833,25 @@ export namespace Prisma {
   }
 
   /**
+   * CallHistory.booking
+   */
+  export type CallHistory$bookingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Booking
+     */
+    select?: BookingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Booking
+     */
+    omit?: BookingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookingInclude<ExtArgs> | null
+    where?: BookingWhereInput
+  }
+
+  /**
    * CallHistory without action
    */
   export type CallHistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14988,6 +15118,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'QuestionType'
+   */
+  export type EnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuestionType'>
+    
+
+
+  /**
+   * Reference to a field of type 'QuestionType[]'
+   */
+  export type ListEnumQuestionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuestionType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'BookingStatus'
    */
   export type EnumBookingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookingStatus'>
@@ -14998,6 +15142,62 @@ export namespace Prisma {
    * Reference to a field of type 'BookingStatus[]'
    */
   export type ListEnumBookingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookingStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'WorkflowTrigger'
+   */
+  export type EnumWorkflowTriggerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkflowTrigger'>
+    
+
+
+  /**
+   * Reference to a field of type 'WorkflowTrigger[]'
+   */
+  export type ListEnumWorkflowTriggerFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkflowTrigger[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'WorkflowAction'
+   */
+  export type EnumWorkflowActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkflowAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'WorkflowAction[]'
+   */
+  export type ListEnumWorkflowActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkflowAction[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CallType'
+   */
+  export type EnumCallTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CallType'>
+    
+
+
+  /**
+   * Reference to a field of type 'CallType[]'
+   */
+  export type ListEnumCallTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CallType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'CallStatus'
+   */
+  export type EnumCallStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CallStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CallStatus[]'
+   */
+  export type ListEnumCallStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CallStatus[]'>
     
 
 
@@ -15329,7 +15529,7 @@ export namespace Prisma {
     eventTypeId?: StringFilter<"BookingQuestion"> | string
     label?: StringFilter<"BookingQuestion"> | string
     placeholder?: StringNullableFilter<"BookingQuestion"> | string | null
-    type?: StringFilter<"BookingQuestion"> | string
+    type?: EnumQuestionTypeFilter<"BookingQuestion"> | $Enums.QuestionType
     required?: BoolFilter<"BookingQuestion"> | boolean
     order?: IntFilter<"BookingQuestion"> | number
     createdAt?: DateTimeFilter<"BookingQuestion"> | Date | string
@@ -15358,7 +15558,7 @@ export namespace Prisma {
     eventTypeId?: StringFilter<"BookingQuestion"> | string
     label?: StringFilter<"BookingQuestion"> | string
     placeholder?: StringNullableFilter<"BookingQuestion"> | string | null
-    type?: StringFilter<"BookingQuestion"> | string
+    type?: EnumQuestionTypeFilter<"BookingQuestion"> | $Enums.QuestionType
     required?: BoolFilter<"BookingQuestion"> | boolean
     order?: IntFilter<"BookingQuestion"> | number
     createdAt?: DateTimeFilter<"BookingQuestion"> | Date | string
@@ -15390,7 +15590,7 @@ export namespace Prisma {
     eventTypeId?: StringWithAggregatesFilter<"BookingQuestion"> | string
     label?: StringWithAggregatesFilter<"BookingQuestion"> | string
     placeholder?: StringNullableWithAggregatesFilter<"BookingQuestion"> | string | null
-    type?: StringWithAggregatesFilter<"BookingQuestion"> | string
+    type?: EnumQuestionTypeWithAggregatesFilter<"BookingQuestion"> | $Enums.QuestionType
     required?: BoolWithAggregatesFilter<"BookingQuestion"> | boolean
     order?: IntWithAggregatesFilter<"BookingQuestion"> | number
     createdAt?: DateTimeWithAggregatesFilter<"BookingQuestion"> | Date | string
@@ -15530,6 +15730,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     eventType?: XOR<EventTypeScalarRelationFilter, EventTypeWhereInput>
     answers?: BookingAnswerListRelationFilter
+    callHistory?: CallHistoryListRelationFilter
   }
 
   export type BookingOrderByWithRelationInput = {
@@ -15545,10 +15746,12 @@ export namespace Prisma {
     createdAt?: SortOrder
     eventType?: EventTypeOrderByWithRelationInput
     answers?: BookingAnswerOrderByRelationAggregateInput
+    callHistory?: CallHistoryOrderByRelationAggregateInput
   }
 
   export type BookingWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    unique_confirmed_booking?: BookingUnique_confirmed_bookingCompoundUniqueInput
     AND?: BookingWhereInput | BookingWhereInput[]
     OR?: BookingWhereInput[]
     NOT?: BookingWhereInput | BookingWhereInput[]
@@ -15563,7 +15766,8 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     eventType?: XOR<EventTypeScalarRelationFilter, EventTypeWhereInput>
     answers?: BookingAnswerListRelationFilter
-  }, "id">
+    callHistory?: CallHistoryListRelationFilter
+  }, "id" | "unique_confirmed_booking">
 
   export type BookingOrderByWithAggregationInput = {
     id?: SortOrder
@@ -15606,8 +15810,8 @@ export namespace Prisma {
     title?: StringFilter<"Workflow"> | string
     description?: StringNullableFilter<"Workflow"> | string | null
     isActive?: BoolFilter<"Workflow"> | boolean
-    trigger?: StringFilter<"Workflow"> | string
-    action?: StringFilter<"Workflow"> | string
+    trigger?: EnumWorkflowTriggerFilter<"Workflow"> | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFilter<"Workflow"> | $Enums.WorkflowAction
     timeValue?: IntFilter<"Workflow"> | number
     timeUnit?: StringFilter<"Workflow"> | string
     createdAt?: DateTimeFilter<"Workflow"> | Date | string
@@ -15643,8 +15847,8 @@ export namespace Prisma {
     title?: StringFilter<"Workflow"> | string
     description?: StringNullableFilter<"Workflow"> | string | null
     isActive?: BoolFilter<"Workflow"> | boolean
-    trigger?: StringFilter<"Workflow"> | string
-    action?: StringFilter<"Workflow"> | string
+    trigger?: EnumWorkflowTriggerFilter<"Workflow"> | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFilter<"Workflow"> | $Enums.WorkflowAction
     timeValue?: IntFilter<"Workflow"> | number
     timeUnit?: StringFilter<"Workflow"> | string
     createdAt?: DateTimeFilter<"Workflow"> | Date | string
@@ -15682,8 +15886,8 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Workflow"> | string
     description?: StringNullableWithAggregatesFilter<"Workflow"> | string | null
     isActive?: BoolWithAggregatesFilter<"Workflow"> | boolean
-    trigger?: StringWithAggregatesFilter<"Workflow"> | string
-    action?: StringWithAggregatesFilter<"Workflow"> | string
+    trigger?: EnumWorkflowTriggerWithAggregatesFilter<"Workflow"> | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionWithAggregatesFilter<"Workflow"> | $Enums.WorkflowAction
     timeValue?: IntWithAggregatesFilter<"Workflow"> | number
     timeUnit?: StringWithAggregatesFilter<"Workflow"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Workflow"> | Date | string
@@ -15762,13 +15966,14 @@ export namespace Prisma {
     callerName?: StringFilter<"CallHistory"> | string
     callerPhone?: StringNullableFilter<"CallHistory"> | string | null
     callerEmail?: StringNullableFilter<"CallHistory"> | string | null
-    callType?: StringFilter<"CallHistory"> | string
-    status?: StringFilter<"CallHistory"> | string
+    callType?: EnumCallTypeFilter<"CallHistory"> | $Enums.CallType
+    status?: EnumCallStatusFilter<"CallHistory"> | $Enums.CallStatus
     duration?: IntFilter<"CallHistory"> | number
     startedAt?: DateTimeFilter<"CallHistory"> | Date | string
     endedAt?: DateTimeNullableFilter<"CallHistory"> | Date | string | null
     notes?: StringNullableFilter<"CallHistory"> | string | null
     workflow?: XOR<WorkflowScalarRelationFilter, WorkflowWhereInput>
+    booking?: XOR<BookingNullableScalarRelationFilter, BookingWhereInput> | null
   }
 
   export type CallHistoryOrderByWithRelationInput = {
@@ -15785,6 +15990,7 @@ export namespace Prisma {
     endedAt?: SortOrderInput | SortOrder
     notes?: SortOrderInput | SortOrder
     workflow?: WorkflowOrderByWithRelationInput
+    booking?: BookingOrderByWithRelationInput
   }
 
   export type CallHistoryWhereUniqueInput = Prisma.AtLeast<{
@@ -15797,13 +16003,14 @@ export namespace Prisma {
     callerName?: StringFilter<"CallHistory"> | string
     callerPhone?: StringNullableFilter<"CallHistory"> | string | null
     callerEmail?: StringNullableFilter<"CallHistory"> | string | null
-    callType?: StringFilter<"CallHistory"> | string
-    status?: StringFilter<"CallHistory"> | string
+    callType?: EnumCallTypeFilter<"CallHistory"> | $Enums.CallType
+    status?: EnumCallStatusFilter<"CallHistory"> | $Enums.CallStatus
     duration?: IntFilter<"CallHistory"> | number
     startedAt?: DateTimeFilter<"CallHistory"> | Date | string
     endedAt?: DateTimeNullableFilter<"CallHistory"> | Date | string | null
     notes?: StringNullableFilter<"CallHistory"> | string | null
     workflow?: XOR<WorkflowScalarRelationFilter, WorkflowWhereInput>
+    booking?: XOR<BookingNullableScalarRelationFilter, BookingWhereInput> | null
   }, "id">
 
   export type CallHistoryOrderByWithAggregationInput = {
@@ -15836,8 +16043,8 @@ export namespace Prisma {
     callerName?: StringWithAggregatesFilter<"CallHistory"> | string
     callerPhone?: StringNullableWithAggregatesFilter<"CallHistory"> | string | null
     callerEmail?: StringNullableWithAggregatesFilter<"CallHistory"> | string | null
-    callType?: StringWithAggregatesFilter<"CallHistory"> | string
-    status?: StringWithAggregatesFilter<"CallHistory"> | string
+    callType?: EnumCallTypeWithAggregatesFilter<"CallHistory"> | $Enums.CallType
+    status?: EnumCallStatusWithAggregatesFilter<"CallHistory"> | $Enums.CallStatus
     duration?: IntWithAggregatesFilter<"CallHistory"> | number
     startedAt?: DateTimeWithAggregatesFilter<"CallHistory"> | Date | string
     endedAt?: DateTimeNullableWithAggregatesFilter<"CallHistory"> | Date | string | null
@@ -16177,7 +16384,7 @@ export namespace Prisma {
     id?: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -16190,7 +16397,7 @@ export namespace Prisma {
     eventTypeId: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -16201,7 +16408,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16214,7 +16421,7 @@ export namespace Prisma {
     eventTypeId?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16226,7 +16433,7 @@ export namespace Prisma {
     eventTypeId: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -16236,7 +16443,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16247,7 +16454,7 @@ export namespace Prisma {
     eventTypeId?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16381,6 +16588,7 @@ export namespace Prisma {
     createdAt?: Date | string
     eventType: EventTypeCreateNestedOneWithoutBookingsInput
     answers?: BookingAnswerCreateNestedManyWithoutBookingInput
+    callHistory?: CallHistoryCreateNestedManyWithoutBookingInput
   }
 
   export type BookingUncheckedCreateInput = {
@@ -16395,6 +16603,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     answers?: BookingAnswerUncheckedCreateNestedManyWithoutBookingInput
+    callHistory?: CallHistoryUncheckedCreateNestedManyWithoutBookingInput
   }
 
   export type BookingUpdateInput = {
@@ -16409,6 +16618,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     eventType?: EventTypeUpdateOneRequiredWithoutBookingsNestedInput
     answers?: BookingAnswerUpdateManyWithoutBookingNestedInput
+    callHistory?: CallHistoryUpdateManyWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateInput = {
@@ -16423,6 +16633,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: BookingAnswerUncheckedUpdateManyWithoutBookingNestedInput
+    callHistory?: CallHistoryUncheckedUpdateManyWithoutBookingNestedInput
   }
 
   export type BookingCreateManyInput = {
@@ -16468,8 +16679,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -16485,8 +16696,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -16500,8 +16711,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16517,8 +16728,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16533,8 +16744,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -16546,8 +16757,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16560,8 +16771,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16632,17 +16843,17 @@ export namespace Prisma {
 
   export type CallHistoryCreateInput = {
     id?: string
-    bookingId?: string | null
     callerName: string
     callerPhone?: string | null
     callerEmail?: string | null
-    callType?: string
-    status?: string
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
     duration?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
     notes?: string | null
     workflow: WorkflowCreateNestedOneWithoutCallHistoryInput
+    booking?: BookingCreateNestedOneWithoutCallHistoryInput
   }
 
   export type CallHistoryUncheckedCreateInput = {
@@ -16652,8 +16863,8 @@ export namespace Prisma {
     callerName: string
     callerPhone?: string | null
     callerEmail?: string | null
-    callType?: string
-    status?: string
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
     duration?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
@@ -16662,17 +16873,17 @@ export namespace Prisma {
 
   export type CallHistoryUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     workflow?: WorkflowUpdateOneRequiredWithoutCallHistoryNestedInput
+    booking?: BookingUpdateOneWithoutCallHistoryNestedInput
   }
 
   export type CallHistoryUncheckedUpdateInput = {
@@ -16682,8 +16893,8 @@ export namespace Prisma {
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16697,8 +16908,8 @@ export namespace Prisma {
     callerName: string
     callerPhone?: string | null
     callerEmail?: string | null
-    callType?: string
-    status?: string
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
     duration?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
@@ -16707,12 +16918,11 @@ export namespace Prisma {
 
   export type CallHistoryUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16726,8 +16936,8 @@ export namespace Prisma {
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17097,6 +17307,13 @@ export namespace Prisma {
     dayOfWeek?: SortOrder
   }
 
+  export type EnumQuestionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeFilter<$PrismaModel> | $Enums.QuestionType
+  }
+
   export type EventTypeScalarRelationFilter = {
     is?: EventTypeWhereInput
     isNot?: EventTypeWhereInput
@@ -17151,6 +17368,16 @@ export namespace Prisma {
 
   export type BookingQuestionSumOrderByAggregateInput = {
     order?: SortOrder
+  }
+
+  export type EnumQuestionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeWithAggregatesFilter<$PrismaModel> | $Enums.QuestionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQuestionTypeFilter<$PrismaModel>
+    _max?: NestedEnumQuestionTypeFilter<$PrismaModel>
   }
 
   export type BookingScalarRelationFilter = {
@@ -17232,6 +17459,22 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type CallHistoryListRelationFilter = {
+    every?: CallHistoryWhereInput
+    some?: CallHistoryWhereInput
+    none?: CallHistoryWhereInput
+  }
+
+  export type CallHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type BookingUnique_confirmed_bookingCompoundUniqueInput = {
+    eventTypeId: string
+    startTime: Date | string
+    status: $Enums.BookingStatus
+  }
+
   export type BookingCountOrderByAggregateInput = {
     id?: SortOrder
     eventTypeId?: SortOrder
@@ -17295,23 +17538,27 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type EnumWorkflowTriggerFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowTrigger | EnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowTriggerFilter<$PrismaModel> | $Enums.WorkflowTrigger
+  }
+
+  export type EnumWorkflowActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowAction | EnumWorkflowActionFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowActionFilter<$PrismaModel> | $Enums.WorkflowAction
+  }
+
   export type WorkflowStepListRelationFilter = {
     every?: WorkflowStepWhereInput
     some?: WorkflowStepWhereInput
     none?: WorkflowStepWhereInput
   }
 
-  export type CallHistoryListRelationFilter = {
-    every?: CallHistoryWhereInput
-    some?: CallHistoryWhereInput
-    none?: CallHistoryWhereInput
-  }
-
   export type WorkflowStepOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CallHistoryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17365,6 +17612,26 @@ export namespace Prisma {
     timeValue?: SortOrder
   }
 
+  export type EnumWorkflowTriggerWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowTrigger | EnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowTriggerWithAggregatesFilter<$PrismaModel> | $Enums.WorkflowTrigger
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWorkflowTriggerFilter<$PrismaModel>
+    _max?: NestedEnumWorkflowTriggerFilter<$PrismaModel>
+  }
+
+  export type EnumWorkflowActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowAction | EnumWorkflowActionFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowActionWithAggregatesFilter<$PrismaModel> | $Enums.WorkflowAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWorkflowActionFilter<$PrismaModel>
+    _max?: NestedEnumWorkflowActionFilter<$PrismaModel>
+  }
+
   export type WorkflowScalarRelationFilter = {
     is?: WorkflowWhereInput
     isNot?: WorkflowWhereInput
@@ -17403,6 +17670,25 @@ export namespace Prisma {
 
   export type WorkflowStepSumOrderByAggregateInput = {
     stepOrder?: SortOrder
+  }
+
+  export type EnumCallTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallType | EnumCallTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallTypeFilter<$PrismaModel> | $Enums.CallType
+  }
+
+  export type EnumCallStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallStatus | EnumCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallStatusFilter<$PrismaModel> | $Enums.CallStatus
+  }
+
+  export type BookingNullableScalarRelationFilter = {
+    is?: BookingWhereInput | null
+    isNot?: BookingWhereInput | null
   }
 
   export type CallHistoryCountOrderByAggregateInput = {
@@ -17456,6 +17742,26 @@ export namespace Prisma {
 
   export type CallHistorySumOrderByAggregateInput = {
     duration?: SortOrder
+  }
+
+  export type EnumCallTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallType | EnumCallTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallTypeWithAggregatesFilter<$PrismaModel> | $Enums.CallType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCallTypeFilter<$PrismaModel>
+    _max?: NestedEnumCallTypeFilter<$PrismaModel>
+  }
+
+  export type EnumCallStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallStatus | EnumCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallStatusWithAggregatesFilter<$PrismaModel> | $Enums.CallStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCallStatusFilter<$PrismaModel>
+    _max?: NestedEnumCallStatusFilter<$PrismaModel>
   }
 
   export type EventTypeCreateNestedManyWithoutUserInput = {
@@ -17896,6 +18202,10 @@ export namespace Prisma {
     connect?: BookingAnswerWhereUniqueInput | BookingAnswerWhereUniqueInput[]
   }
 
+  export type EnumQuestionTypeFieldUpdateOperationsInput = {
+    set?: $Enums.QuestionType
+  }
+
   export type EventTypeUpdateOneRequiredWithoutQuestionsNestedInput = {
     create?: XOR<EventTypeCreateWithoutQuestionsInput, EventTypeUncheckedCreateWithoutQuestionsInput>
     connectOrCreate?: EventTypeCreateOrConnectWithoutQuestionsInput
@@ -17987,11 +18297,25 @@ export namespace Prisma {
     connect?: BookingAnswerWhereUniqueInput | BookingAnswerWhereUniqueInput[]
   }
 
+  export type CallHistoryCreateNestedManyWithoutBookingInput = {
+    create?: XOR<CallHistoryCreateWithoutBookingInput, CallHistoryUncheckedCreateWithoutBookingInput> | CallHistoryCreateWithoutBookingInput[] | CallHistoryUncheckedCreateWithoutBookingInput[]
+    connectOrCreate?: CallHistoryCreateOrConnectWithoutBookingInput | CallHistoryCreateOrConnectWithoutBookingInput[]
+    createMany?: CallHistoryCreateManyBookingInputEnvelope
+    connect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+  }
+
   export type BookingAnswerUncheckedCreateNestedManyWithoutBookingInput = {
     create?: XOR<BookingAnswerCreateWithoutBookingInput, BookingAnswerUncheckedCreateWithoutBookingInput> | BookingAnswerCreateWithoutBookingInput[] | BookingAnswerUncheckedCreateWithoutBookingInput[]
     connectOrCreate?: BookingAnswerCreateOrConnectWithoutBookingInput | BookingAnswerCreateOrConnectWithoutBookingInput[]
     createMany?: BookingAnswerCreateManyBookingInputEnvelope
     connect?: BookingAnswerWhereUniqueInput | BookingAnswerWhereUniqueInput[]
+  }
+
+  export type CallHistoryUncheckedCreateNestedManyWithoutBookingInput = {
+    create?: XOR<CallHistoryCreateWithoutBookingInput, CallHistoryUncheckedCreateWithoutBookingInput> | CallHistoryCreateWithoutBookingInput[] | CallHistoryUncheckedCreateWithoutBookingInput[]
+    connectOrCreate?: CallHistoryCreateOrConnectWithoutBookingInput | CallHistoryCreateOrConnectWithoutBookingInput[]
+    createMany?: CallHistoryCreateManyBookingInputEnvelope
+    connect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
   }
 
   export type EnumBookingStatusFieldUpdateOperationsInput = {
@@ -18024,6 +18348,20 @@ export namespace Prisma {
     deleteMany?: BookingAnswerScalarWhereInput | BookingAnswerScalarWhereInput[]
   }
 
+  export type CallHistoryUpdateManyWithoutBookingNestedInput = {
+    create?: XOR<CallHistoryCreateWithoutBookingInput, CallHistoryUncheckedCreateWithoutBookingInput> | CallHistoryCreateWithoutBookingInput[] | CallHistoryUncheckedCreateWithoutBookingInput[]
+    connectOrCreate?: CallHistoryCreateOrConnectWithoutBookingInput | CallHistoryCreateOrConnectWithoutBookingInput[]
+    upsert?: CallHistoryUpsertWithWhereUniqueWithoutBookingInput | CallHistoryUpsertWithWhereUniqueWithoutBookingInput[]
+    createMany?: CallHistoryCreateManyBookingInputEnvelope
+    set?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    disconnect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    delete?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    connect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    update?: CallHistoryUpdateWithWhereUniqueWithoutBookingInput | CallHistoryUpdateWithWhereUniqueWithoutBookingInput[]
+    updateMany?: CallHistoryUpdateManyWithWhereWithoutBookingInput | CallHistoryUpdateManyWithWhereWithoutBookingInput[]
+    deleteMany?: CallHistoryScalarWhereInput | CallHistoryScalarWhereInput[]
+  }
+
   export type BookingAnswerUncheckedUpdateManyWithoutBookingNestedInput = {
     create?: XOR<BookingAnswerCreateWithoutBookingInput, BookingAnswerUncheckedCreateWithoutBookingInput> | BookingAnswerCreateWithoutBookingInput[] | BookingAnswerUncheckedCreateWithoutBookingInput[]
     connectOrCreate?: BookingAnswerCreateOrConnectWithoutBookingInput | BookingAnswerCreateOrConnectWithoutBookingInput[]
@@ -18036,6 +18374,20 @@ export namespace Prisma {
     update?: BookingAnswerUpdateWithWhereUniqueWithoutBookingInput | BookingAnswerUpdateWithWhereUniqueWithoutBookingInput[]
     updateMany?: BookingAnswerUpdateManyWithWhereWithoutBookingInput | BookingAnswerUpdateManyWithWhereWithoutBookingInput[]
     deleteMany?: BookingAnswerScalarWhereInput | BookingAnswerScalarWhereInput[]
+  }
+
+  export type CallHistoryUncheckedUpdateManyWithoutBookingNestedInput = {
+    create?: XOR<CallHistoryCreateWithoutBookingInput, CallHistoryUncheckedCreateWithoutBookingInput> | CallHistoryCreateWithoutBookingInput[] | CallHistoryUncheckedCreateWithoutBookingInput[]
+    connectOrCreate?: CallHistoryCreateOrConnectWithoutBookingInput | CallHistoryCreateOrConnectWithoutBookingInput[]
+    upsert?: CallHistoryUpsertWithWhereUniqueWithoutBookingInput | CallHistoryUpsertWithWhereUniqueWithoutBookingInput[]
+    createMany?: CallHistoryCreateManyBookingInputEnvelope
+    set?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    disconnect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    delete?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    connect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+    update?: CallHistoryUpdateWithWhereUniqueWithoutBookingInput | CallHistoryUpdateWithWhereUniqueWithoutBookingInput[]
+    updateMany?: CallHistoryUpdateManyWithWhereWithoutBookingInput | CallHistoryUpdateManyWithWhereWithoutBookingInput[]
+    deleteMany?: CallHistoryScalarWhereInput | CallHistoryScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutWorkflowsInput = {
@@ -18070,6 +18422,14 @@ export namespace Prisma {
     connectOrCreate?: CallHistoryCreateOrConnectWithoutWorkflowInput | CallHistoryCreateOrConnectWithoutWorkflowInput[]
     createMany?: CallHistoryCreateManyWorkflowInputEnvelope
     connect?: CallHistoryWhereUniqueInput | CallHistoryWhereUniqueInput[]
+  }
+
+  export type EnumWorkflowTriggerFieldUpdateOperationsInput = {
+    set?: $Enums.WorkflowTrigger
+  }
+
+  export type EnumWorkflowActionFieldUpdateOperationsInput = {
+    set?: $Enums.WorkflowAction
   }
 
   export type UserUpdateOneRequiredWithoutWorkflowsNestedInput = {
@@ -18156,12 +18516,36 @@ export namespace Prisma {
     connect?: WorkflowWhereUniqueInput
   }
 
+  export type BookingCreateNestedOneWithoutCallHistoryInput = {
+    create?: XOR<BookingCreateWithoutCallHistoryInput, BookingUncheckedCreateWithoutCallHistoryInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutCallHistoryInput
+    connect?: BookingWhereUniqueInput
+  }
+
+  export type EnumCallTypeFieldUpdateOperationsInput = {
+    set?: $Enums.CallType
+  }
+
+  export type EnumCallStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CallStatus
+  }
+
   export type WorkflowUpdateOneRequiredWithoutCallHistoryNestedInput = {
     create?: XOR<WorkflowCreateWithoutCallHistoryInput, WorkflowUncheckedCreateWithoutCallHistoryInput>
     connectOrCreate?: WorkflowCreateOrConnectWithoutCallHistoryInput
     upsert?: WorkflowUpsertWithoutCallHistoryInput
     connect?: WorkflowWhereUniqueInput
     update?: XOR<XOR<WorkflowUpdateToOneWithWhereWithoutCallHistoryInput, WorkflowUpdateWithoutCallHistoryInput>, WorkflowUncheckedUpdateWithoutCallHistoryInput>
+  }
+
+  export type BookingUpdateOneWithoutCallHistoryNestedInput = {
+    create?: XOR<BookingCreateWithoutCallHistoryInput, BookingUncheckedCreateWithoutCallHistoryInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutCallHistoryInput
+    upsert?: BookingUpsertWithoutCallHistoryInput
+    disconnect?: BookingWhereInput | boolean
+    delete?: BookingWhereInput | boolean
+    connect?: BookingWhereUniqueInput
+    update?: XOR<XOR<BookingUpdateToOneWithWhereWithoutCallHistoryInput, BookingUpdateWithoutCallHistoryInput>, BookingUncheckedUpdateWithoutCallHistoryInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -18313,6 +18697,23 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedEnumQuestionTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeFilter<$PrismaModel> | $Enums.QuestionType
+  }
+
+  export type NestedEnumQuestionTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuestionType | EnumQuestionTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuestionType[] | ListEnumQuestionTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuestionTypeWithAggregatesFilter<$PrismaModel> | $Enums.QuestionType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQuestionTypeFilter<$PrismaModel>
+    _max?: NestedEnumQuestionTypeFilter<$PrismaModel>
+  }
+
   export type NestedEnumBookingStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.BookingStatus | EnumBookingStatusFieldRefInput<$PrismaModel>
     in?: $Enums.BookingStatus[] | ListEnumBookingStatusFieldRefInput<$PrismaModel>
@@ -18353,6 +18754,74 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumWorkflowTriggerFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowTrigger | EnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowTriggerFilter<$PrismaModel> | $Enums.WorkflowTrigger
+  }
+
+  export type NestedEnumWorkflowActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowAction | EnumWorkflowActionFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowActionFilter<$PrismaModel> | $Enums.WorkflowAction
+  }
+
+  export type NestedEnumWorkflowTriggerWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowTrigger | EnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowTrigger[] | ListEnumWorkflowTriggerFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowTriggerWithAggregatesFilter<$PrismaModel> | $Enums.WorkflowTrigger
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWorkflowTriggerFilter<$PrismaModel>
+    _max?: NestedEnumWorkflowTriggerFilter<$PrismaModel>
+  }
+
+  export type NestedEnumWorkflowActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.WorkflowAction | EnumWorkflowActionFieldRefInput<$PrismaModel>
+    in?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.WorkflowAction[] | ListEnumWorkflowActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumWorkflowActionWithAggregatesFilter<$PrismaModel> | $Enums.WorkflowAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumWorkflowActionFilter<$PrismaModel>
+    _max?: NestedEnumWorkflowActionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCallTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallType | EnumCallTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallTypeFilter<$PrismaModel> | $Enums.CallType
+  }
+
+  export type NestedEnumCallStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallStatus | EnumCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallStatusFilter<$PrismaModel> | $Enums.CallStatus
+  }
+
+  export type NestedEnumCallTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallType | EnumCallTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallType[] | ListEnumCallTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallTypeWithAggregatesFilter<$PrismaModel> | $Enums.CallType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCallTypeFilter<$PrismaModel>
+    _max?: NestedEnumCallTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCallStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CallStatus | EnumCallStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CallStatus[] | ListEnumCallStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCallStatusWithAggregatesFilter<$PrismaModel> | $Enums.CallStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCallStatusFilter<$PrismaModel>
+    _max?: NestedEnumCallStatusFilter<$PrismaModel>
   }
 
   export type EventTypeCreateWithoutUserInput = {
@@ -18458,8 +18927,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -18473,8 +18942,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -18608,8 +19077,8 @@ export namespace Prisma {
     title?: StringFilter<"Workflow"> | string
     description?: StringNullableFilter<"Workflow"> | string | null
     isActive?: BoolFilter<"Workflow"> | boolean
-    trigger?: StringFilter<"Workflow"> | string
-    action?: StringFilter<"Workflow"> | string
+    trigger?: EnumWorkflowTriggerFilter<"Workflow"> | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFilter<"Workflow"> | $Enums.WorkflowAction
     timeValue?: IntFilter<"Workflow"> | number
     timeUnit?: StringFilter<"Workflow"> | string
     createdAt?: DateTimeFilter<"Workflow"> | Date | string
@@ -18770,6 +19239,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     answers?: BookingAnswerCreateNestedManyWithoutBookingInput
+    callHistory?: CallHistoryCreateNestedManyWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutEventTypeInput = {
@@ -18783,6 +19253,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     answers?: BookingAnswerUncheckedCreateNestedManyWithoutBookingInput
+    callHistory?: CallHistoryUncheckedCreateNestedManyWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutEventTypeInput = {
@@ -18799,7 +19270,7 @@ export namespace Prisma {
     id?: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -18810,7 +19281,7 @@ export namespace Prisma {
     id?: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -18948,7 +19419,7 @@ export namespace Prisma {
     eventTypeId?: StringFilter<"BookingQuestion"> | string
     label?: StringFilter<"BookingQuestion"> | string
     placeholder?: StringNullableFilter<"BookingQuestion"> | string | null
-    type?: StringFilter<"BookingQuestion"> | string
+    type?: EnumQuestionTypeFilter<"BookingQuestion"> | $Enums.QuestionType
     required?: BoolFilter<"BookingQuestion"> | boolean
     order?: IntFilter<"BookingQuestion"> | number
     createdAt?: DateTimeFilter<"BookingQuestion"> | Date | string
@@ -19242,6 +19713,7 @@ export namespace Prisma {
     notes?: string | null
     createdAt?: Date | string
     eventType: EventTypeCreateNestedOneWithoutBookingsInput
+    callHistory?: CallHistoryCreateNestedManyWithoutBookingInput
   }
 
   export type BookingUncheckedCreateWithoutAnswersInput = {
@@ -19255,6 +19727,7 @@ export namespace Prisma {
     cancelledAt?: Date | string | null
     notes?: string | null
     createdAt?: Date | string
+    callHistory?: CallHistoryUncheckedCreateNestedManyWithoutBookingInput
   }
 
   export type BookingCreateOrConnectWithoutAnswersInput = {
@@ -19266,7 +19739,7 @@ export namespace Prisma {
     id?: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -19278,7 +19751,7 @@ export namespace Prisma {
     eventTypeId: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -19311,6 +19784,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     eventType?: EventTypeUpdateOneRequiredWithoutBookingsNestedInput
+    callHistory?: CallHistoryUpdateManyWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutAnswersInput = {
@@ -19324,6 +19798,7 @@ export namespace Prisma {
     cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    callHistory?: CallHistoryUncheckedUpdateManyWithoutBookingNestedInput
   }
 
   export type BookingQuestionUpsertWithoutAnswersInput = {
@@ -19341,7 +19816,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19353,7 +19828,7 @@ export namespace Prisma {
     eventTypeId?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19498,6 +19973,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CallHistoryCreateWithoutBookingInput = {
+    id?: string
+    callerName: string
+    callerPhone?: string | null
+    callerEmail?: string | null
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
+    duration?: number
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    notes?: string | null
+    workflow: WorkflowCreateNestedOneWithoutCallHistoryInput
+  }
+
+  export type CallHistoryUncheckedCreateWithoutBookingInput = {
+    id?: string
+    workflowId: string
+    callerName: string
+    callerPhone?: string | null
+    callerEmail?: string | null
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
+    duration?: number
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    notes?: string | null
+  }
+
+  export type CallHistoryCreateOrConnectWithoutBookingInput = {
+    where: CallHistoryWhereUniqueInput
+    create: XOR<CallHistoryCreateWithoutBookingInput, CallHistoryUncheckedCreateWithoutBookingInput>
+  }
+
+  export type CallHistoryCreateManyBookingInputEnvelope = {
+    data: CallHistoryCreateManyBookingInput | CallHistoryCreateManyBookingInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EventTypeUpsertWithoutBookingsInput = {
     update: XOR<EventTypeUpdateWithoutBookingsInput, EventTypeUncheckedUpdateWithoutBookingsInput>
     create: XOR<EventTypeCreateWithoutBookingsInput, EventTypeUncheckedCreateWithoutBookingsInput>
@@ -19555,6 +20068,40 @@ export namespace Prisma {
   export type BookingAnswerUpdateManyWithWhereWithoutBookingInput = {
     where: BookingAnswerScalarWhereInput
     data: XOR<BookingAnswerUpdateManyMutationInput, BookingAnswerUncheckedUpdateManyWithoutBookingInput>
+  }
+
+  export type CallHistoryUpsertWithWhereUniqueWithoutBookingInput = {
+    where: CallHistoryWhereUniqueInput
+    update: XOR<CallHistoryUpdateWithoutBookingInput, CallHistoryUncheckedUpdateWithoutBookingInput>
+    create: XOR<CallHistoryCreateWithoutBookingInput, CallHistoryUncheckedCreateWithoutBookingInput>
+  }
+
+  export type CallHistoryUpdateWithWhereUniqueWithoutBookingInput = {
+    where: CallHistoryWhereUniqueInput
+    data: XOR<CallHistoryUpdateWithoutBookingInput, CallHistoryUncheckedUpdateWithoutBookingInput>
+  }
+
+  export type CallHistoryUpdateManyWithWhereWithoutBookingInput = {
+    where: CallHistoryScalarWhereInput
+    data: XOR<CallHistoryUpdateManyMutationInput, CallHistoryUncheckedUpdateManyWithoutBookingInput>
+  }
+
+  export type CallHistoryScalarWhereInput = {
+    AND?: CallHistoryScalarWhereInput | CallHistoryScalarWhereInput[]
+    OR?: CallHistoryScalarWhereInput[]
+    NOT?: CallHistoryScalarWhereInput | CallHistoryScalarWhereInput[]
+    id?: StringFilter<"CallHistory"> | string
+    workflowId?: StringFilter<"CallHistory"> | string
+    bookingId?: StringNullableFilter<"CallHistory"> | string | null
+    callerName?: StringFilter<"CallHistory"> | string
+    callerPhone?: StringNullableFilter<"CallHistory"> | string | null
+    callerEmail?: StringNullableFilter<"CallHistory"> | string | null
+    callType?: EnumCallTypeFilter<"CallHistory"> | $Enums.CallType
+    status?: EnumCallStatusFilter<"CallHistory"> | $Enums.CallStatus
+    duration?: IntFilter<"CallHistory"> | number
+    startedAt?: DateTimeFilter<"CallHistory"> | Date | string
+    endedAt?: DateTimeNullableFilter<"CallHistory"> | Date | string | null
+    notes?: StringNullableFilter<"CallHistory"> | string | null
   }
 
   export type UserCreateWithoutWorkflowsInput = {
@@ -19616,16 +20163,16 @@ export namespace Prisma {
 
   export type CallHistoryCreateWithoutWorkflowInput = {
     id?: string
-    bookingId?: string | null
     callerName: string
     callerPhone?: string | null
     callerEmail?: string | null
-    callType?: string
-    status?: string
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
     duration?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
     notes?: string | null
+    booking?: BookingCreateNestedOneWithoutCallHistoryInput
   }
 
   export type CallHistoryUncheckedCreateWithoutWorkflowInput = {
@@ -19634,8 +20181,8 @@ export namespace Prisma {
     callerName: string
     callerPhone?: string | null
     callerEmail?: string | null
-    callType?: string
-    status?: string
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
     duration?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
@@ -19733,31 +20280,13 @@ export namespace Prisma {
     data: XOR<CallHistoryUpdateManyMutationInput, CallHistoryUncheckedUpdateManyWithoutWorkflowInput>
   }
 
-  export type CallHistoryScalarWhereInput = {
-    AND?: CallHistoryScalarWhereInput | CallHistoryScalarWhereInput[]
-    OR?: CallHistoryScalarWhereInput[]
-    NOT?: CallHistoryScalarWhereInput | CallHistoryScalarWhereInput[]
-    id?: StringFilter<"CallHistory"> | string
-    workflowId?: StringFilter<"CallHistory"> | string
-    bookingId?: StringNullableFilter<"CallHistory"> | string | null
-    callerName?: StringFilter<"CallHistory"> | string
-    callerPhone?: StringNullableFilter<"CallHistory"> | string | null
-    callerEmail?: StringNullableFilter<"CallHistory"> | string | null
-    callType?: StringFilter<"CallHistory"> | string
-    status?: StringFilter<"CallHistory"> | string
-    duration?: IntFilter<"CallHistory"> | number
-    startedAt?: DateTimeFilter<"CallHistory"> | Date | string
-    endedAt?: DateTimeNullableFilter<"CallHistory"> | Date | string | null
-    notes?: StringNullableFilter<"CallHistory"> | string | null
-  }
-
   export type WorkflowCreateWithoutStepsInput = {
     id?: string
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -19772,8 +20301,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -19802,8 +20331,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19818,8 +20347,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19832,8 +20361,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -19848,8 +20377,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -19860,6 +20389,39 @@ export namespace Prisma {
   export type WorkflowCreateOrConnectWithoutCallHistoryInput = {
     where: WorkflowWhereUniqueInput
     create: XOR<WorkflowCreateWithoutCallHistoryInput, WorkflowUncheckedCreateWithoutCallHistoryInput>
+  }
+
+  export type BookingCreateWithoutCallHistoryInput = {
+    id?: string
+    bookerName: string
+    bookerEmail: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    cancelledAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    eventType: EventTypeCreateNestedOneWithoutBookingsInput
+    answers?: BookingAnswerCreateNestedManyWithoutBookingInput
+  }
+
+  export type BookingUncheckedCreateWithoutCallHistoryInput = {
+    id?: string
+    eventTypeId: string
+    bookerName: string
+    bookerEmail: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: $Enums.BookingStatus
+    cancelledAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    answers?: BookingAnswerUncheckedCreateNestedManyWithoutBookingInput
+  }
+
+  export type BookingCreateOrConnectWithoutCallHistoryInput = {
+    where: BookingWhereUniqueInput
+    create: XOR<BookingCreateWithoutCallHistoryInput, BookingUncheckedCreateWithoutCallHistoryInput>
   }
 
   export type WorkflowUpsertWithoutCallHistoryInput = {
@@ -19878,8 +20440,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19894,13 +20456,52 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     steps?: WorkflowStepUncheckedUpdateManyWithoutWorkflowNestedInput
+  }
+
+  export type BookingUpsertWithoutCallHistoryInput = {
+    update: XOR<BookingUpdateWithoutCallHistoryInput, BookingUncheckedUpdateWithoutCallHistoryInput>
+    create: XOR<BookingCreateWithoutCallHistoryInput, BookingUncheckedCreateWithoutCallHistoryInput>
+    where?: BookingWhereInput
+  }
+
+  export type BookingUpdateToOneWithWhereWithoutCallHistoryInput = {
+    where?: BookingWhereInput
+    data: XOR<BookingUpdateWithoutCallHistoryInput, BookingUncheckedUpdateWithoutCallHistoryInput>
+  }
+
+  export type BookingUpdateWithoutCallHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    bookerName?: StringFieldUpdateOperationsInput | string
+    bookerEmail?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventType?: EventTypeUpdateOneRequiredWithoutBookingsNestedInput
+    answers?: BookingAnswerUpdateManyWithoutBookingNestedInput
+  }
+
+  export type BookingUncheckedUpdateWithoutCallHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventTypeId?: StringFieldUpdateOperationsInput | string
+    bookerName?: StringFieldUpdateOperationsInput | string
+    bookerEmail?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    cancelledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    answers?: BookingAnswerUncheckedUpdateManyWithoutBookingNestedInput
   }
 
   export type EventTypeCreateManyUserInput = {
@@ -19938,8 +20539,8 @@ export namespace Prisma {
     title: string
     description?: string | null
     isActive?: boolean
-    trigger?: string
-    action?: string
+    trigger?: $Enums.WorkflowTrigger
+    action?: $Enums.WorkflowAction
     timeValue?: number
     timeUnit?: string
     createdAt?: Date | string
@@ -20049,8 +20650,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20064,8 +20665,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20079,8 +20680,8 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
-    trigger?: StringFieldUpdateOperationsInput | string
-    action?: StringFieldUpdateOperationsInput | string
+    trigger?: EnumWorkflowTriggerFieldUpdateOperationsInput | $Enums.WorkflowTrigger
+    action?: EnumWorkflowActionFieldUpdateOperationsInput | $Enums.WorkflowAction
     timeValue?: IntFieldUpdateOperationsInput | number
     timeUnit?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20139,7 +20740,7 @@ export namespace Prisma {
     id?: string
     label: string
     placeholder?: string | null
-    type?: string
+    type?: $Enums.QuestionType
     required?: boolean
     order?: number
     createdAt?: Date | string
@@ -20165,6 +20766,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: BookingAnswerUpdateManyWithoutBookingNestedInput
+    callHistory?: CallHistoryUpdateManyWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateWithoutEventTypeInput = {
@@ -20178,6 +20780,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     answers?: BookingAnswerUncheckedUpdateManyWithoutBookingNestedInput
+    callHistory?: CallHistoryUncheckedUpdateManyWithoutBookingNestedInput
   }
 
   export type BookingUncheckedUpdateManyWithoutEventTypeInput = {
@@ -20196,7 +20799,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20207,7 +20810,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20218,7 +20821,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     label?: StringFieldUpdateOperationsInput | string
     placeholder?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
+    type?: EnumQuestionTypeFieldUpdateOperationsInput | $Enums.QuestionType
     required?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -20281,6 +20884,20 @@ export namespace Prisma {
     answer: string
   }
 
+  export type CallHistoryCreateManyBookingInput = {
+    id?: string
+    workflowId: string
+    callerName: string
+    callerPhone?: string | null
+    callerEmail?: string | null
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
+    duration?: number
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    notes?: string | null
+  }
+
   export type BookingAnswerUpdateWithoutBookingInput = {
     id?: StringFieldUpdateOperationsInput | string
     answer?: StringFieldUpdateOperationsInput | string
@@ -20299,6 +20916,48 @@ export namespace Prisma {
     answer?: StringFieldUpdateOperationsInput | string
   }
 
+  export type CallHistoryUpdateWithoutBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    callerName?: StringFieldUpdateOperationsInput | string
+    callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
+    duration?: IntFieldUpdateOperationsInput | number
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    workflow?: WorkflowUpdateOneRequiredWithoutCallHistoryNestedInput
+  }
+
+  export type CallHistoryUncheckedUpdateWithoutBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workflowId?: StringFieldUpdateOperationsInput | string
+    callerName?: StringFieldUpdateOperationsInput | string
+    callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
+    duration?: IntFieldUpdateOperationsInput | number
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CallHistoryUncheckedUpdateManyWithoutBookingInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    workflowId?: StringFieldUpdateOperationsInput | string
+    callerName?: StringFieldUpdateOperationsInput | string
+    callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
+    duration?: IntFieldUpdateOperationsInput | number
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type WorkflowStepCreateManyWorkflowInput = {
     id?: string
     stepOrder: number
@@ -20313,8 +20972,8 @@ export namespace Prisma {
     callerName: string
     callerPhone?: string | null
     callerEmail?: string | null
-    callType?: string
-    status?: string
+    callType?: $Enums.CallType
+    status?: $Enums.CallStatus
     duration?: number
     startedAt?: Date | string
     endedAt?: Date | string | null
@@ -20347,16 +21006,16 @@ export namespace Prisma {
 
   export type CallHistoryUpdateWithoutWorkflowInput = {
     id?: StringFieldUpdateOperationsInput | string
-    bookingId?: NullableStringFieldUpdateOperationsInput | string | null
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
+    booking?: BookingUpdateOneWithoutCallHistoryNestedInput
   }
 
   export type CallHistoryUncheckedUpdateWithoutWorkflowInput = {
@@ -20365,8 +21024,8 @@ export namespace Prisma {
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -20379,8 +21038,8 @@ export namespace Prisma {
     callerName?: StringFieldUpdateOperationsInput | string
     callerPhone?: NullableStringFieldUpdateOperationsInput | string | null
     callerEmail?: NullableStringFieldUpdateOperationsInput | string | null
-    callType?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    callType?: EnumCallTypeFieldUpdateOperationsInput | $Enums.CallType
+    status?: EnumCallStatusFieldUpdateOperationsInput | $Enums.CallStatus
     duration?: IntFieldUpdateOperationsInput | number
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
