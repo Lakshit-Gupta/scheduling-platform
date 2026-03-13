@@ -1,4 +1,4 @@
-import { Clock } from "lucide-react"
+import { Clock, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 interface EventType {
@@ -46,26 +46,29 @@ export default function UserProfilePage({ user }: { user: User }) {
               <Link
                 key={event.id}
                 href={`/${event.slug}`}
-                className={`block px-6 py-5 transition-colors hover:bg-neutral-800 ${
+                className={`group block px-6 py-5 transition-colors hover:bg-neutral-800/80 ${
                   index < user.eventTypes.length - 1 ? "border-b border-neutral-800" : ""
                 }`}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-center gap-3">
                   <div
-                    className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
+                    className="mt-0.5 h-2.5 w-2.5 rounded-full shrink-0"
                     style={{ backgroundColor: event.color || "#3B82F6" }}
                   />
                   <div className="min-w-0 flex-1">
-                    <h2 className="text-sm font-medium text-neutral-100">{event.title}</h2>
+                    <h2 className="text-sm font-medium text-neutral-100 group-hover:text-white transition-colors">
+                      {event.title}
+                    </h2>
                     {event.description && (
-                      <p className="mt-0.5 line-clamp-1 text-xs text-neutral-500">{event.description}</p>
+                      <p className="mt-0.5 text-xs text-neutral-500 line-clamp-1">{event.description}</p>
                     )}
                     <div className="mt-2 flex items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 rounded-md border border-neutral-700 bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400 border border-neutral-700">
                         <Clock className="h-3 w-3" />{event.duration}m
                       </span>
                     </div>
                   </div>
+                  <ArrowRight className="h-4 w-4 text-neutral-600 group-hover:text-neutral-400 transition-colors shrink-0" />
                 </div>
               </Link>
             ))}
