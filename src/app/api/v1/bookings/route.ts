@@ -3,6 +3,15 @@ import prisma from "@/lib/prisma"
 import { DEFAULT_USER_ID } from "@/lib/constants"
 import { sendBookingConfirmationEmail } from "@/lib/email"
 
+function hasErrorCode(error: unknown): error is { code: string } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    typeof (error as { code?: unknown }).code === "string"
+  )
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const status = searchParams.get("status")
@@ -60,8 +69,8 @@ export async function POST(request: NextRequest) {
   const end = new Date(start.getTime() + eventType.duration * 60 * 1000)
   const bufferMs = (eventType.bufferMinutes || 0) * 60 * 1000
 
-  // Check for conflicting bookings
-  const conflict = await prisma.booking.findFirst({
+  // Buffer overlap check remains pre-write so near slots are blocked.
+  const overlappingBooking = await prisma.booking.findFirst({
     where: {
       eventTypeId,
       status: "CONFIRMED",
@@ -72,48 +81,61 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  if (conflict) {
+  if (overlappingBooking) {
     return NextResponse.json(
       { error: "This time slot is no longer available" },
       { status: 409 }
     )
   }
 
-  const booking = await prisma.booking.create({
-    data: {
-      eventTypeId,
-      bookerName,
-      bookerEmail,
-      startTime: start,
-      endTime: end,
-      status: "CONFIRMED",
-      notes: notes || null,
-    },
-    include: { eventType: true },
-  })
-
-  if (answers?.length) {
-    await prisma.bookingAnswer.createMany({
-      data: answers.map((item: { questionId: string; answer: string }) => ({
-        bookingId: booking.id,
-        questionId: item.questionId,
-        answer: item.answer,
-      })),
-    })
-  }
-
   try {
-    await sendBookingConfirmationEmail({
+    const booking = await prisma.booking.create({
+      data: {
+        eventTypeId,
+        bookerName,
+        bookerEmail,
+        startTime: start,
+        endTime: end,
+        status: "CONFIRMED",
+        notes: notes || null,
+      },
+      include: { eventType: true },
+    })
+
+    if (answers?.length) {
+      await prisma.bookingAnswer.createMany({
+        data: answers.map((item: { questionId: string; answer: string }) => ({
+          bookingId: booking.id,
+          questionId: item.questionId,
+          answer: item.answer,
+        })),
+      })
+    }
+
+    void sendBookingConfirmationEmail({
       bookerName: booking.bookerName,
       bookerEmail: booking.bookerEmail,
       eventTitle: eventType.title,
       hostName: eventType.user?.name ?? "Host",
       startTime: booking.startTime,
       endTime: booking.endTime,
+    }).catch((error) => {
+      console.error("Email error:", error)
     })
-  } catch (error) {
-    console.error("Email error:", error)
-  }
 
-  return NextResponse.json(booking, { status: 201 })
+    return NextResponse.json(booking, { status: 201 })
+  } catch (error: unknown) {
+    if (hasErrorCode(error) && error.code === "P2002") {
+      return NextResponse.json(
+        { error: "This time slot is no longer available" },
+        { status: 409 }
+      )
+    }
+
+    console.error("Booking error:", error)
+    return NextResponse.json(
+      { error: "Failed to create booking" },
+      { status: 500 }
+    )
+  }
 }

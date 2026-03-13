@@ -7,34 +7,34 @@ import { cn } from "@/lib/utils"
 
 export type ToastType = "success" | "error" | "warning" | "info"
 
-export interface Toast {
+export interface ToastItem {
   id: string
   message: string
   type: ToastType
 }
 
-let toastListeners: ((toasts: Toast[]) => void)[] = []
-let currentToasts: Toast[] = []
+let listeners: ((toasts: ToastItem[]) => void)[] = []
+let currentToasts: ToastItem[] = []
 
 export function toast(message: string, type: ToastType = "success") {
   const id = Math.random().toString(36).slice(2)
-  const newToast: Toast = { id, message, type }
+  const newToast: ToastItem = { id, message, type }
   currentToasts = [...currentToasts, newToast]
-  toastListeners.forEach((listener) => listener(currentToasts))
+  listeners.forEach((listener) => listener(currentToasts))
 
   setTimeout(() => {
     currentToasts = currentToasts.filter((t) => t.id !== id)
-    toastListeners.forEach((listener) => listener(currentToasts))
+    listeners.forEach((listener) => listener(currentToasts))
   }, 3500)
 }
 
 export function ToastContainer() {
-  const [toasts, setToasts] = useState<Toast[]>([])
+  const [toasts, setToasts] = useState<ToastItem[]>([])
 
   useEffect(() => {
-    toastListeners.push(setToasts)
+    listeners.push(setToasts)
     return () => {
-      toastListeners = toastListeners.filter((listener) => listener !== setToasts)
+      listeners = listeners.filter((listener) => listener !== setToasts)
     }
   }, [])
 
@@ -46,10 +46,10 @@ export function ToastContainer() {
   }
 
   const colors = {
-    success: "border-emerald-500/30 bg-neutral-800",
-    error: "border-red-500/30 bg-neutral-800",
-    warning: "border-yellow-500/30 bg-neutral-800",
-    info: "border-blue-500/30 bg-neutral-800",
+    success: "border-emerald-400/30 bg-neutral-800",
+    error: "border-red-400/30 bg-neutral-800",
+    warning: "border-yellow-400/30 bg-neutral-800",
+    info: "border-blue-400/30 bg-neutral-800",
   }
 
   return (

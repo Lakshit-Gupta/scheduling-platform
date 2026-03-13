@@ -4,6 +4,22 @@ import { useState } from "react"
 import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
 
+type BookingQuestionType = "TEXT" | "NUMBER" | "SELECT" | "CHECKBOX"
+
+function normalizeQuestionType(type: string): BookingQuestionType {
+  const normalized = type.trim().toUpperCase()
+  if (
+    normalized === "TEXT" ||
+    normalized === "NUMBER" ||
+    normalized === "SELECT" ||
+    normalized === "CHECKBOX"
+  ) {
+    return normalized
+  }
+  if (normalized === "TEXTAREA") return "TEXT"
+  return "TEXT"
+}
+
 interface BookingFormProps {
   onSubmit: (data: { name: string; email: string; notes: string }) => void
   loading?: boolean
@@ -63,31 +79,39 @@ export default function BookingForm({
           placeholder="Any additional info..."
         />
       </div>
-      {questions.map((question) => (
-        <div key={question.id} className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">
-            {question.label}
-            {question.required ? " *" : ""}
-          </label>
-          {question.type === "textarea" ? (
-            <textarea
-              value={answers[question.id] || ""}
-              onChange={(e) => onAnswerChange?.(question.id, e.target.value)}
-              className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all duration-150"
-              rows={3}
-              placeholder={question.placeholder || "Your answer"}
-              required={question.required}
-            />
-          ) : (
-            <Input
-              value={answers[question.id] || ""}
-              onChange={(e) => onAnswerChange?.(question.id, e.target.value)}
-              placeholder={question.placeholder || "Your answer"}
-              required={question.required}
-            />
-          )}
-        </div>
-      ))}
+      {questions.map((question) => {
+        const questionType = normalizeQuestionType(question.type)
+
+        return (
+          <div key={question.id} className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              {question.label}
+              {question.required ? " *" : ""}
+            </label>
+            {questionType === "CHECKBOX" ? (
+              <label className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900">
+                <input
+                  type="checkbox"
+                  checked={answers[question.id] === "true"}
+                  onChange={(e) =>
+                    onAnswerChange?.(question.id, e.target.checked ? "true" : "false")
+                  }
+                  required={question.required}
+                />
+                {question.placeholder || "Select"}
+              </label>
+            ) : (
+              <Input
+                type={questionType === "NUMBER" ? "number" : "text"}
+                value={answers[question.id] || ""}
+                onChange={(e) => onAnswerChange?.(question.id, e.target.value)}
+                placeholder={question.placeholder || "Your answer"}
+                required={question.required}
+              />
+            )}
+          </div>
+        )
+      })}
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Confirming..." : "Confirm Booking"}
       </Button>

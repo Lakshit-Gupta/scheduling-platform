@@ -67,6 +67,7 @@ model Availability {
   timezone   String                @default("Asia/Kolkata")
 
   @@index([userId])
+  @@index([userId, dayOfWeek])
   @@index([scheduleId])
 }
 
@@ -76,7 +77,7 @@ model BookingQuestion {
   eventType   EventType       @relation(fields: [eventTypeId], references: [id], onDelete: Cascade)
   label       String
   placeholder String?
-  type        String          @default("text")
+  type        QuestionType    @default(TEXT)
   required    Boolean         @default(false)
   order       Int             @default(0)
   answers     BookingAnswer[]
@@ -122,28 +123,32 @@ model Booking {
   cancelledAt DateTime?
   notes       String?
   answers     BookingAnswer[]
+  callHistory CallHistory[]
   createdAt   DateTime        @default(now())
 
+  @@unique([eventTypeId, startTime, status], name: "unique_confirmed_booking")
   @@index([eventTypeId])
   @@index([startTime])
   @@index([status])
+  @@index([eventTypeId, startTime])
+  @@index([eventTypeId, status])
 }
 
 model Workflow {
-  id          String         @id @default(uuid())
+  id          String          @id @default(uuid())
   userId      String
-  user        User           @relation(fields: [userId], references: [id])
+  user        User            @relation(fields: [userId], references: [id])
   title       String
   description String?
-  isActive    Boolean        @default(true)
-  trigger     String         @default("BEFORE_EVENT")
-  action      String         @default("EMAIL_REMINDER")
-  timeValue   Int            @default(24)
-  timeUnit    String         @default("HOURS")
+  isActive    Boolean         @default(true)
+  trigger     WorkflowTrigger @default(NEW_BOOKING)
+  action      WorkflowAction  @default(SEND_EMAIL)
+  timeValue   Int             @default(24)
+  timeUnit    String          @default("HOURS")
   steps       WorkflowStep[]
   callHistory CallHistory[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
   @@index([userId])
 }
@@ -161,22 +166,55 @@ model WorkflowStep {
 }
 
 model CallHistory {
-  id          String    @id @default(uuid())
+  id          String     @id @default(uuid())
   workflowId  String
-  workflow    Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  workflow    Workflow   @relation(fields: [workflowId], references: [id], onDelete: Cascade)
   bookingId   String?
+  booking     Booking?   @relation(fields: [bookingId], references: [id])
   callerName  String
   callerPhone String?
   callerEmail String?
-  callType    String    @default("OUTGOING")
-  status      String    @default("COMPLETED")
-  duration    Int       @default(0)
-  startedAt   DateTime  @default(now())
+  callType    CallType   @default(EMAIL)
+  status      CallStatus @default(COMPLETED)
+  duration    Int        @default(0)
+  startedAt   DateTime   @default(now())
   endedAt     DateTime?
   notes       String?
 
   @@index([workflowId])
+  @@index([bookingId])
   @@index([startedAt])
+}
+
+enum WorkflowTrigger {
+  NEW_BOOKING
+  CANCEL_BOOKING
+  RESCHEDULE_BOOKING
+}
+
+enum WorkflowAction {
+  SEND_EMAIL
+  SEND_SMS
+  WEBHOOK
+}
+
+enum CallStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum CallType {
+  EMAIL
+  SMS
+  WEBHOOK
+}
+
+enum QuestionType {
+  TEXT
+  NUMBER
+  SELECT
+  CHECKBOX
 }
 
 enum BookingStatus {
