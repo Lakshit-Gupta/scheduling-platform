@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+import { ToastContainer } from "@/components/ui/Toast";
 
 export const metadata: Metadata = {
   title: "Cal Clone",
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className="antialiased">
         <ServiceWorkerRegistrar />
         {children}
+        <ToastContainer />
       </body>
     </html>
   );
