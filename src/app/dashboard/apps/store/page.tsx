@@ -192,7 +192,9 @@ export default function AppStorePage() {
 
       {filteredApps && (
         <div className="mt-6">
-          <p className="mb-4 text-sm text-neutral-400">{filteredApps.length} result{filteredApps.length !== 1 ? "s" : ""} for "{searchQuery}"</p>
+          <p className="mb-4 text-sm text-neutral-400">
+            {filteredApps.length} result{filteredApps.length !== 1 ? "s" : ""} for &quot;{searchQuery}&quot;
+          </p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredApps.map((app) => (
               <motion.div
