@@ -32,14 +32,21 @@ export async function PUT(request: NextRequest) {
           dayOfWeek: number
           startTime: string
           endTime: string
-          timezone?: string
-        }) => ({
-          userId: DEFAULT_USER_ID,
-          dayOfWeek: item.dayOfWeek,
-          startTime: item.startTime,
-          endTime: item.endTime,
-          timezone: item.timezone || "Asia/Kolkata",
-        })
+          timezone?: string | null
+        }) => {
+          const timezone =
+            typeof item.timezone === "string" && item.timezone.trim()
+              ? item.timezone
+              : "Asia/Kolkata"
+
+          return {
+            userId: DEFAULT_USER_ID,
+            dayOfWeek: item.dayOfWeek,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            timezone,
+          }
+        }
       ),
     })
   }
