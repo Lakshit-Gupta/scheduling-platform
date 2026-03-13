@@ -101,32 +101,32 @@ export default function BookingPageClient({
     .slice(0, 2)
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f8f9fa] p-4">
-      <div className="mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm md:flex-row">
+    <div className="min-h-screen overflow-x-hidden bg-[#0f0f0f] p-4 md:flex md:items-center md:justify-center">
+      <div className="mx-auto flex max-w-4xl flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-900 shadow-sm md:flex-row">
         {/* Left Panel */}
-        <div className="w-full border-b border-gray-200 p-6 md:w-72 md:border-b-0 md:border-r md:p-8">
+        <div className="w-full border-b border-neutral-700 p-6 md:w-72 md:border-b-0 md:border-r md:p-8">
           <div
             className="flex h-11 w-11 items-center justify-center rounded-full text-sm font-semibold text-white"
             style={{ backgroundColor: eventType.color || "#111827" }}
           >
             {initials}
           </div>
-          <p className="mt-4 text-[13px] text-gray-500">{host.name}</p>
-          <h1 className="mt-1 font-cal text-xl text-gray-900">
+          <p className="mt-4 text-[13px] text-neutral-500">{host.name}</p>
+          <h1 className="mt-1 font-cal text-xl text-neutral-100">
             {eventType.title}
           </h1>
           {eventType.description && (
-            <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
+            <p className="mt-3 text-[13px] leading-relaxed text-neutral-400">
               {eventType.description}
             </p>
           )}
           <div className="mt-5 space-y-2">
-            <div className="flex items-center gap-2.5 text-[13px] text-gray-500">
-              <Clock className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2.5 text-[13px] text-neutral-500">
+              <Clock className="h-4 w-4 text-neutral-500" />
               {eventType.duration} min
             </div>
-            <div className="flex items-center gap-2.5 text-[13px] text-gray-500">
-              <Globe className="h-4 w-4 text-gray-400" />
+            <div className="flex items-center gap-2.5 text-[13px] text-neutral-500">
+              <Globe className="h-4 w-4 text-neutral-500" />
               Asia/Kolkata
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function BookingPageClient({
         <div className="flex-1 p-6 md:p-8">
           {!showForm ? (
             <>
-              <h2 className="mb-6 font-cal text-lg text-gray-900">
+              <h2 className="mb-6 font-cal text-lg text-neutral-100">
                 Select a Date &amp; Time
               </h2>
               <div className="flex flex-col gap-6 lg:flex-row">
@@ -149,13 +149,13 @@ export default function BookingPageClient({
                 </div>
                 {selectedDate && (
                   <div className="flex-1">
-                    <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-gray-500">
+                    <h3 className="mb-3 text-[13px] font-semibold uppercase tracking-wider text-neutral-500">
                       Available Times
                     </h3>
                     {loadingSlots ? (
                       <div className="flex items-center gap-2">
-                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900" />
-                        <span className="text-sm text-gray-500">Loading...</span>
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-neutral-600 border-t-neutral-100" />
+                        <span className="text-sm text-neutral-500">Loading...</span>
                       </div>
                     ) : (
                       <TimeSlotGrid
@@ -169,18 +169,18 @@ export default function BookingPageClient({
               </div>
             </>
           ) : (
-            <div className="max-w-sm">
+            <div className="max-w-sm overflow-y-auto">
               <button
                 onClick={() => setShowForm(false)}
-                className="mb-5 inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-900"
+                className="mb-5 inline-flex items-center gap-1.5 text-sm text-neutral-400 transition-colors hover:text-neutral-100"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </button>
-              <h2 className="font-cal text-lg text-gray-900">
+              <h2 className="font-cal text-lg text-neutral-100">
                 Enter your details
               </h2>
-              <p className="mt-1 mb-5 text-[13px] text-gray-500">
+              <p className="mt-1 mb-5 text-[13px] text-neutral-500">
                 {selectedDate} at{" "}
                 {selectedSlot &&
                   new Date(selectedSlot).toLocaleTimeString("en-IN", {

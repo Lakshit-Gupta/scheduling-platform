@@ -80,8 +80,6 @@ export async function PUT(
       )
     }
 
-    const oldStartTime = booking.startTime
-
     const updated = await prisma.booking.update({
       where: { id },
       data: { startTime: newStart, endTime: newEnd },
