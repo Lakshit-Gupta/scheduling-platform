@@ -21,6 +21,13 @@ export interface Availability {
 }
 
 export type BookingStatus = "CONFIRMED" | "CANCELLED";
+export type WorkflowTrigger =
+  | "NEW_BOOKING"
+  | "CANCEL_BOOKING"
+  | "RESCHEDULE_BOOKING";
+export type WorkflowAction = "SEND_EMAIL" | "SEND_SMS" | "WEBHOOK";
+export type CallStatus = "PENDING" | "COMPLETED" | "FAILED";
+export type CallType = "EMAIL" | "SMS" | "WEBHOOK";
 
 export interface Booking {
   id: string;
@@ -46,4 +53,42 @@ export interface BookingFormData {
   bookerEmail: string;
   startTime: Date;
   notes?: string;
+}
+
+export interface Workflow {
+  id: string;
+  userId: string;
+  title: string;
+  description: string | null;
+  isActive: boolean;
+  trigger: WorkflowTrigger;
+  action: WorkflowAction;
+  timeValue: number;
+  timeUnit: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface WorkflowStep {
+  id: string;
+  workflowId: string;
+  stepOrder: number;
+  action: string;
+  template: string | null;
+  createdAt: Date;
+}
+
+export interface CallHistory {
+  id: string;
+  workflowId: string;
+  bookingId: string | null;
+  callerName: string;
+  callerPhone: string | null;
+  callerEmail: string | null;
+  callType: CallType;
+  status: CallStatus;
+  duration: number;
+  startedAt: Date;
+  endedAt: Date | null;
+  notes: string | null;
 }

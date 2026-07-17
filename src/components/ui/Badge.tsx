@@ -1,34 +1,22 @@
 import { cn } from "@/lib/utils"
 import { ReactNode } from "react"
 
-type Variant = "success" | "warning" | "danger" | "default"
+type Variant = "default" | "success" | "warning" | "danger" | "info" | "purple"
 
 const variantStyles: Record<Variant, string> = {
-  success: "bg-green-100 text-green-800",
-  warning: "bg-yellow-100 text-yellow-800",
-  danger: "bg-red-100 text-red-800",
-  default: "bg-gray-100 text-gray-800",
+  default: "bg-neutral-700 text-neutral-400",
+  success: "bg-emerald-500/10 text-emerald-400",
+  warning: "bg-amber-500/10 text-amber-400",
+  danger: "bg-red-500/10 text-red-400",
+  info: "bg-sky-500/10 text-sky-400",
+  purple: "bg-purple-500/10 text-purple-400",
 }
 
-interface BadgeProps {
-  variant?: Variant
-  children: ReactNode
-  className?: string
-}
+interface BadgeProps { variant?: Variant; children: ReactNode; className?: string }
 
-export default function Badge({
-  variant = "default",
-  children,
-  className,
-}: BadgeProps) {
+export default function Badge({ variant = "default", children, className }: BadgeProps) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-        variantStyles[variant],
-        className
-      )}
-    >
+    <span className={cn("inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium tracking-wide", variantStyles[variant], className)}>
       {children}
     </span>
   )

@@ -2,130 +2,107 @@ import prisma from "@/lib/prisma"
 import { DEFAULT_USER_ID } from "@/lib/constants"
 import Badge from "@/components/ui/Badge"
 import { formatTime, formatDate } from "@/lib/utils"
+import Link from "next/link"
+import { Calendar, TrendingUp, Link as LinkIcon, CheckCircle, Plus, Clock, ExternalLink } from "lucide-react"
 
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
   const now = new Date()
-
-  const [totalBookings, upcomingBookings, eventTypesCount, recentBookings] =
-    await Promise.all([
-      prisma.booking.count({
-        where: {
-          eventType: { userId: DEFAULT_USER_ID },
-        },
-      }),
-      prisma.booking.count({
-        where: {
-          eventType: { userId: DEFAULT_USER_ID },
-          status: "CONFIRMED",
-          startTime: { gte: now },
-        },
-      }),
-      prisma.eventType.count({
-        where: { userId: DEFAULT_USER_ID },
-      }),
-      prisma.booking.findMany({
-        where: {
-          eventType: { userId: DEFAULT_USER_ID },
-        },
-        include: { eventType: true },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      }),
-    ])
+  const [totalBookings, upcomingBookings, eventTypesCount, recentBookings] = await Promise.all([
+    prisma.booking.count({ where: { eventType: { userId: DEFAULT_USER_ID } } }),
+    prisma.booking.count({ where: { eventType: { userId: DEFAULT_USER_ID }, status: "CONFIRMED", startTime: { gte: now } } }),
+    prisma.eventType.count({ where: { userId: DEFAULT_USER_ID } }),
+    prisma.booking.findMany({ where: { eventType: { userId: DEFAULT_USER_ID } }, include: { eventType: true }, orderBy: { createdAt: "desc" }, take: 5 }),
+  ])
 
   const stats = [
-    { label: "Total Bookings", value: totalBookings },
-    { label: "Upcoming", value: upcomingBookings },
-    { label: "Event Types", value: eventTypesCount },
-    { label: "Confirmed", value: upcomingBookings },
+    { label: "Total Bookings", value: totalBookings, icon: Calendar },
+    { label: "Upcoming", value: upcomingBookings, icon: TrendingUp },
+    { label: "Event Types", value: eventTypesCount, icon: LinkIcon },
+    { label: "Confirmed", value: upcomingBookings, icon: CheckCircle },
   ]
 
   return (
-    <div>
-      <h1 className="mt-8 mb-6 px-8 text-2xl font-bold text-gray-900">
-        Dashboard
-      </h1>
+    <div className="px-6 py-8 md:px-8">
+      <h1 className="font-cal text-[28px] text-neutral-100">Dashboard</h1>
+      <p className="mt-1 text-sm text-neutral-400">Overview of your scheduling activity.</p>
 
-      <div className="mb-8 grid grid-cols-4 gap-4 px-8">
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-lg border border-gray-200 bg-white p-6"
-          >
-            <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-            <p className="mt-1 text-sm text-gray-500">{stat.label}</p>
+          <div key={stat.label} className="rounded-xl border border-neutral-700 bg-neutral-800 p-5 shadow-sm transition-all hover:border-neutral-600">
+            <div className="flex items-center justify-between">
+              <p className="text-[13px] font-medium text-neutral-400">{stat.label}</p>
+              <stat.icon className="h-4 w-4 text-neutral-500" />
+            </div>
+            <p className="mt-2 text-3xl font-bold tracking-tight text-neutral-100">{stat.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="px-8">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">
-          Recent Bookings
-        </h2>
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+      <div className="mt-6 rounded-xl border border-neutral-700 bg-neutral-800/50 p-5">
+        <h2 className="mb-4 text-sm font-semibold text-neutral-100">Quick Actions</h2>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/dashboard/event-types/new"
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 transition-colors hover:bg-neutral-600"
+          >
+            <Plus className="h-4 w-4" />
+            New Event Type
+          </Link>
+          <Link
+            href="/dashboard/availability"
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 transition-colors hover:bg-neutral-600"
+          >
+            <Clock className="h-4 w-4" />
+            Set Availability
+          </Link>
+          <Link
+            href="/lakshit-gupta"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-neutral-700 px-4 py-2 text-sm font-medium text-neutral-100 transition-colors hover:bg-neutral-600"
+          >
+            <ExternalLink className="h-4 w-4" />
+            View Public Page
+          </Link>
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="font-cal text-xl text-neutral-100">Recent Bookings</h2>
+        <div className="mt-4 overflow-hidden rounded-xl border border-neutral-700 bg-neutral-800 shadow-sm">
           {recentBookings.length === 0 ? (
-            <p className="px-6 py-4 text-sm text-gray-500">
-              No bookings yet.
-            </p>
+            <div className="flex flex-col items-center justify-center py-16 px-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-700"><Calendar className="h-6 w-6 text-neutral-500" /></div>
+              <p className="mt-4 text-sm font-medium text-neutral-100">No bookings yet</p>
+              <p className="mt-1 text-sm text-neutral-400">Bookings will appear here once someone schedules with you.</p>
+            </div>
           ) : (
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Event
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Date &amp; Time
-                  </th>
-                  <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Status
-                  </th>
+                <tr className="border-b border-neutral-700 bg-neutral-800/50">
+                  <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-neutral-500">Name</th>
+                  <th className="hidden px-6 py-3 text-xs font-medium uppercase tracking-wider text-neutral-500 sm:table-cell">Event</th>
+                  <th className="hidden px-6 py-3 text-xs font-medium uppercase tracking-wider text-neutral-500 md:table-cell">Date &amp; Time</th>
+                  <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-neutral-500">Status</th>
                 </tr>
               </thead>
-              <tbody>
-                {recentBookings.map(
-                  (booking: (typeof recentBookings)[number]) => (
-                    <tr
-                      key={booking.id}
-                      className="border-t border-gray-100"
-                    >
-                      <td className="px-6 py-4">
-                        <p className="font-medium text-gray-900">
-                          {booking.bookerName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {booking.bookerEmail}
-                        </p>
-                      </td>
-                      <td className="px-6 py-4 text-gray-700">
-                        {booking.eventType.title}
-                      </td>
-                      <td className="px-6 py-4 text-gray-700">
-                        {formatDate(booking.startTime)}
-                        <br />
-                        <span className="text-xs text-gray-500">
-                          {formatTime(booking.startTime)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Badge
-                          variant={
-                            booking.status === "CONFIRMED"
-                              ? "success"
-                              : "danger"
-                          }
-                        >
-                          {booking.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  )
-                )}
+              <tbody className="divide-y divide-neutral-700">
+                {recentBookings.map((booking: (typeof recentBookings)[number]) => (
+                  <tr key={booking.id} className="transition-colors hover:bg-neutral-700/30">
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-neutral-100">{booking.bookerName}</p>
+                      <p className="text-xs text-neutral-500">{booking.bookerEmail}</p>
+                    </td>
+                    <td className="hidden px-6 py-4 text-neutral-400 sm:table-cell">{booking.eventType.title}</td>
+                    <td className="hidden px-6 py-4 md:table-cell">
+                      <p className="text-neutral-100">{formatDate(booking.startTime)}</p>
+                      <p className="text-xs text-neutral-500">{formatTime(booking.startTime)}</p>
+                    </td>
+                    <td className="px-6 py-4"><Badge variant={booking.status === "CONFIRMED" ? "success" : "danger"}>{booking.status}</Badge></td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           )}

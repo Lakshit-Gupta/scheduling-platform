@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface CalendarPickerProps {
-  availableDays: number[] // 0-6, days that have availability
+  availableDays: number[]
   onDateSelect: (date: string) => void
   selectedDate: string | null
 }
@@ -75,7 +75,6 @@ export default function CalendarPicker({
     return `${y}-${m}-${d}`
   }
 
-  // Don't allow navigating to past months
   const canGoPrev =
     currentYear > today.getFullYear() ||
     (currentYear === today.getFullYear() && currentMonth > today.getMonth())
@@ -86,24 +85,24 @@ export default function CalendarPicker({
         <button
           onClick={prevMonth}
           disabled={!canGoPrev}
-          className="rounded p-1 hover:bg-gray-100 disabled:opacity-30"
+          className="rounded-lg p-1.5 transition-all duration-150 hover:bg-gray-100 disabled:opacity-30"
         >
-          <ChevronLeft className="h-5 w-5 text-gray-600" />
+          <ChevronLeft className="h-4 w-4 text-gray-600" />
         </button>
         <span className="text-sm font-semibold text-gray-900">
           {MONTH_NAMES[currentMonth]} {currentYear}
         </span>
         <button
           onClick={nextMonth}
-          className="rounded p-1 hover:bg-gray-100"
+          className="rounded-lg p-1.5 transition-all duration-150 hover:bg-gray-100"
         >
-          <ChevronRight className="h-5 w-5 text-gray-600" />
+          <ChevronRight className="h-4 w-4 text-gray-600" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-500">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-400">
         {DAY_LABELS.map((d) => (
-          <div key={d} className="py-1 font-medium">
+          <div key={d} className="py-1.5 font-medium uppercase tracking-wide">
             {d}
           </div>
         ))}
@@ -125,14 +124,13 @@ export default function CalendarPicker({
               disabled={disabled}
               onClick={() => onDateSelect(dateStr)}
               className={cn(
-                "mx-auto flex h-10 w-10 items-center justify-center text-sm transition-colors",
+                "mx-auto flex h-10 w-10 items-center justify-center rounded-lg text-sm transition-all duration-150",
                 disabled
-                  ? "cursor-not-allowed text-gray-200"
-                  : "cursor-pointer font-medium text-gray-900 hover:bg-blue-50 hover:text-blue-600",
-                selected
-                  ? "rounded-full bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
-                  : "rounded-lg",
-                todayDate && !selected && !disabled && "ring-1 ring-blue-500 rounded-lg"
+                  ? "cursor-not-allowed text-gray-300"
+                  : "cursor-pointer font-medium text-gray-900 hover:bg-gray-100",
+                selected &&
+                  "bg-gray-900 text-white hover:bg-gray-800 hover:text-white",
+                todayDate && !selected && !disabled && "ring-1 ring-gray-900 font-semibold"
               )}
             >
               {day}

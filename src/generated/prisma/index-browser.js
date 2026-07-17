@@ -130,6 +130,15 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AvailabilityScheduleScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  isDefault: 'isDefault',
+  timezone: 'timezone',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.EventTypeScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -147,10 +156,39 @@ exports.Prisma.EventTypeScalarFieldEnum = {
 exports.Prisma.AvailabilityScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  scheduleId: 'scheduleId',
   dayOfWeek: 'dayOfWeek',
   startTime: 'startTime',
   endTime: 'endTime',
   timezone: 'timezone'
+};
+
+exports.Prisma.BookingQuestionScalarFieldEnum = {
+  id: 'id',
+  eventTypeId: 'eventTypeId',
+  label: 'label',
+  placeholder: 'placeholder',
+  type: 'type',
+  required: 'required',
+  order: 'order',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BookingAnswerScalarFieldEnum = {
+  id: 'id',
+  bookingId: 'bookingId',
+  questionId: 'questionId',
+  answer: 'answer'
+};
+
+exports.Prisma.DateOverrideScalarFieldEnum = {
+  id: 'id',
+  eventTypeId: 'eventTypeId',
+  date: 'date',
+  isBlocked: 'isBlocked',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.BookingScalarFieldEnum = {
@@ -164,6 +202,44 @@ exports.Prisma.BookingScalarFieldEnum = {
   cancelledAt: 'cancelledAt',
   notes: 'notes',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.WorkflowScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  description: 'description',
+  isActive: 'isActive',
+  trigger: 'trigger',
+  action: 'action',
+  timeValue: 'timeValue',
+  timeUnit: 'timeUnit',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkflowStepScalarFieldEnum = {
+  id: 'id',
+  workflowId: 'workflowId',
+  stepOrder: 'stepOrder',
+  action: 'action',
+  template: 'template',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CallHistoryScalarFieldEnum = {
+  id: 'id',
+  workflowId: 'workflowId',
+  bookingId: 'bookingId',
+  callerName: 'callerName',
+  callerPhone: 'callerPhone',
+  callerEmail: 'callerEmail',
+  callType: 'callType',
+  status: 'status',
+  duration: 'duration',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  notes: 'notes'
 };
 
 exports.Prisma.SortOrder = {
@@ -180,16 +256,54 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.QuestionType = exports.$Enums.QuestionType = {
+  TEXT: 'TEXT',
+  NUMBER: 'NUMBER',
+  SELECT: 'SELECT',
+  CHECKBOX: 'CHECKBOX'
+};
+
 exports.BookingStatus = exports.$Enums.BookingStatus = {
   CONFIRMED: 'CONFIRMED',
   CANCELLED: 'CANCELLED'
 };
 
+exports.WorkflowTrigger = exports.$Enums.WorkflowTrigger = {
+  NEW_BOOKING: 'NEW_BOOKING',
+  CANCEL_BOOKING: 'CANCEL_BOOKING',
+  RESCHEDULE_BOOKING: 'RESCHEDULE_BOOKING'
+};
+
+exports.WorkflowAction = exports.$Enums.WorkflowAction = {
+  SEND_EMAIL: 'SEND_EMAIL',
+  SEND_SMS: 'SEND_SMS',
+  WEBHOOK: 'WEBHOOK'
+};
+
+exports.CallType = exports.$Enums.CallType = {
+  EMAIL: 'EMAIL',
+  SMS: 'SMS',
+  WEBHOOK: 'WEBHOOK'
+};
+
+exports.CallStatus = exports.$Enums.CallStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
+  AvailabilitySchedule: 'AvailabilitySchedule',
   EventType: 'EventType',
   Availability: 'Availability',
-  Booking: 'Booking'
+  BookingQuestion: 'BookingQuestion',
+  BookingAnswer: 'BookingAnswer',
+  DateOverride: 'DateOverride',
+  Booking: 'Booking',
+  Workflow: 'Workflow',
+  WorkflowStep: 'WorkflowStep',
+  CallHistory: 'CallHistory'
 };
 
 /**

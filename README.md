@@ -1,78 +1,108 @@
-# Scheduling Platform — Cal.com Clone
+# Cal Clone — Scheduling Platform
 
-## 🚀 Live Demo
-[Add Vercel URL after deployment]
+A full-featured scheduling/booking web application that replicates Cal.com's design and functionality.
 
-## ⚡ Quick Start
+**Live Demo:** https://cal.lakshit.dev  
+**GitHub:** https://github.com/Lakshit-Gupta/scheduling-platform
+
+## Features
+
+### Core Features
+- ✅ **Event Types Management** — Create, edit, and delete event types with title, description, duration, and unique booking URL.
+- ✅ **Availability Settings** — Configure available days, time ranges, and timezone per schedule.
+- ✅ **Public Booking Page** — Calendar UI with available slots, booking form, and double-booking prevention.
+- ✅ **Bookings Dashboard** — View upcoming and past bookings and cancel bookings when needed.
+
+### Bonus Features
+- ✅ **Responsive Design** — Mobile, tablet, and desktop layouts with a hamburger sidebar experience.
+- ✅ **Multiple Availability Schedules** — Create and manage multiple named schedules.
+- ✅ **Date Overrides** — Block specific dates or define custom hours for individual dates.
+- ✅ **Rescheduling Flow** — Reschedule bookings with conflict detection and slot validation.
+- ✅ **Email Notifications** — Send booking confirmation and cancellation emails via Resend.
+- ✅ **Buffer Time** — Add buffer windows between meetings to avoid back-to-back scheduling.
+- ✅ **Custom Booking Questions** — Define event-type-specific form questions and capture answers.
+- ✅ **Workflows** — Create automation workflows for booking-related actions.
+- ✅ **Call History** — Track workflow-triggered call attempts and outcomes.
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript |
+| Database | PostgreSQL (Supabase) |
+| ORM | Prisma 7 |
+| Styling | Tailwind CSS v4 |
+| UI | Radix UI + Framer Motion |
+| Email | Resend API |
+| Deployment | Vercel |
+
+## Database Schema
+
+The Prisma schema contains 12 entities total (11 models + 1 enum):
+- **User**
+- **EventType**
+- **Availability**
+- **AvailabilitySchedule**
+- **Booking**
+- **BookingQuestion**
+- **BookingAnswer**
+- **DateOverride**
+- **Workflow**
+- **WorkflowStep**
+- **CallHistory**
+- **BookingStatus** (enum)
+
+## Setup Instructions
 
 ### Prerequisites
 - Node.js 18+
-- PostgreSQL database (we use Supabase)
-- pnpm
+- pnpm (`npm install -g pnpm`)
 
-### Setup
+### Installation
+
 ```bash
+# Clone repository
+git clone https://github.com/Lakshit-Gupta/scheduling-platform.git
+cd scheduling-platform
+
+# Install dependencies
 pnpm install
+
+# Configure environment variables
 cp .env.example .env
-# Fill in DATABASE_URL in .env
+# Update .env with your database credentials and optional Resend key
+
+# Generate Prisma client
+pnpm prisma generate
+
+# Push schema to database
 pnpm db:push
+
+# Seed sample data
 pnpm db:seed
+
+# Start development server
 pnpm dev
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000).
 
-### Docker
-```bash
-docker-compose up --build
-```
+## Environment Variables
 
-## 🛠 Tech Stack
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 15 + TypeScript |
-| Database | PostgreSQL (Supabase) |
-| ORM | Prisma 7 |
-| Styling | Tailwind CSS |
-| Deployment | Vercel + Supabase |
-
-## ✨ Features
-### Core
-- Event type management (create, edit, delete)
-- Availability settings (days + time ranges + timezone)
-- Public booking page with calendar
-- Time slot generation with double-booking prevention
-- Booking confirmation page
-- Bookings dashboard (upcoming, past, cancelled)
-- Cancel bookings
-
-### Bonus
-- Email notifications (Resend API)
-- Buffer time between meetings
-- Responsive design (mobile, tablet, desktop)
-- Timezone support
-
-## 📡 API Reference
-| Method | Endpoint | Description |
+| Variable | Required | Description |
 |---|---|---|
-| GET | /api/v1/event-types | List all event types |
-| POST | /api/v1/event-types | Create event type |
-| GET | /api/v1/event-types/[id] | Get event type |
-| PUT | /api/v1/event-types/[id] | Update event type |
-| DELETE | /api/v1/event-types/[id] | Delete event type |
-| GET | /api/v1/availability | Get availability |
-| PUT | /api/v1/availability | Update availability |
-| GET | /api/v1/bookings | List bookings |
-| POST | /api/v1/bookings | Create booking |
-| PATCH | /api/v1/bookings/[id] | Cancel booking |
-| GET | /api/v1/slots | Get available slots |
+| `DATABASE_URL` | ✅ | Supabase pooled PostgreSQL connection (port 6543) for app runtime |
+| `DIRECT_URL` | ✅ | Direct PostgreSQL connection (port 5432) for migrations |
+| `NEXT_PUBLIC_APP_URL` | ✅ | Public app URL used by frontend and links |
+| `RESEND_API_KEY` | Optional | API key for email notifications through Resend |
+| `RESEND_FROM_EMAIL` | Optional | Sender email for Resend. Defaults to `no-reply@send.lakshit.dev` |
 
-## 🗄 Database Schema
-4 tables: User, EventType, Availability, Booking
-See prisma/schema.prisma for full schema.
+## Assumptions
 
-## 📝 Assumptions
-- Single default user (no auth required per assignment)
-- Default timezone: Asia/Kolkata
-- Availability applies to all event types equally
-- Slot generation respects buffer time and existing bookings
+1. **Single default user** — No auth layer is implemented; app runs with one seeded default user.
+2. **Timezone default** — Primary timezone is `Asia/Kolkata`, configurable per schedule.
+3. **Email optional** — If `RESEND_API_KEY` is missing, email notifications are skipped.
+4. **Email sender default** — If `RESEND_FROM_EMAIL` is missing, sender defaults to `no-reply@send.lakshit.dev`.
+5. **Seeded data available** — Seed script provides baseline event types, availability, and bookings for testing.
+6. **Public booking route** — Public booking pages are accessible at `/{slug}` without login.

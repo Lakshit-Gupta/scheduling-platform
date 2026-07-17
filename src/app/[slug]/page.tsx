@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import BookingPageClient from "./BookingPageClient"
+import UserProfilePage from "./UserProfilePage"
 
 export const dynamic = 'force-dynamic'
 
@@ -13,35 +14,53 @@ export default async function PublicBookingPage({
 
   const eventType = await prisma.eventType.findFirst({
     where: { slug, isActive: true },
-    include: { user: true },
+    include: {
+      user: true,
+      questions: { orderBy: { order: "asc" } },
+    },
   })
 
-  if (!eventType) {
-    notFound()
+  if (eventType) {
+    const availability = await prisma.availability.findMany({
+      where: { userId: eventType.userId },
+      orderBy: { dayOfWeek: "asc" },
+    })
+
+    const availableDays = availability.map((a: typeof availability[number]) => a.dayOfWeek)
+
+    return (
+      <BookingPageClient
+        eventType={{
+          id: eventType.id,
+          title: eventType.title,
+          description: eventType.description,
+          duration: eventType.duration,
+          slug: eventType.slug,
+          color: eventType.color,
+          questions: eventType.questions,
+        }}
+        host={{
+          name: eventType.user.name,
+          username: eventType.user.username,
+        }}
+        availableDays={availableDays}
+      />
+    )
   }
 
-  const availability = await prisma.availability.findMany({
-    where: { userId: eventType.userId },
-    orderBy: { dayOfWeek: "asc" },
+  const user = await prisma.user.findUnique({
+    where: { username: slug },
+    include: {
+      eventTypes: {
+        where: { isActive: true },
+        orderBy: { createdAt: "asc" },
+      },
+    },
   })
 
-  const availableDays = availability.map((a: typeof availability[number]) => a.dayOfWeek)
+  if (user) {
+    return <UserProfilePage user={user} />
+  }
 
-  return (
-    <BookingPageClient
-      eventType={{
-        id: eventType.id,
-        title: eventType.title,
-        description: eventType.description,
-        duration: eventType.duration,
-        slug: eventType.slug,
-        color: eventType.color,
-      }}
-      host={{
-        name: eventType.user.name,
-        username: eventType.user.username,
-      }}
-      availableDays={availableDays}
-    />
-  )
+  notFound()
 }
