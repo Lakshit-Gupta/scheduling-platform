@@ -85,22 +85,22 @@ export default function CalendarPicker({
         <button
           onClick={prevMonth}
           disabled={!canGoPrev}
-          className="rounded-lg p-1.5 transition-all duration-150 hover:bg-neutral-700 disabled:opacity-30"
+          className="rounded-lg p-1.5 transition-all duration-150 hover:bg-gray-100 disabled:opacity-30"
         >
-          <ChevronLeft className="h-4 w-4 text-neutral-400" />
+          <ChevronLeft className="h-4 w-4 text-gray-600" />
         </button>
-        <span className="text-sm font-semibold text-neutral-100">
+        <span className="text-sm font-semibold text-gray-900">
           {MONTH_NAMES[currentMonth]} {currentYear}
         </span>
         <button
           onClick={nextMonth}
-          className="rounded-lg p-1.5 transition-all duration-150 hover:bg-neutral-700"
+          className="rounded-lg p-1.5 transition-all duration-150 hover:bg-gray-100"
         >
-          <ChevronRight className="h-4 w-4 text-neutral-400" />
+          <ChevronRight className="h-4 w-4 text-gray-600" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-neutral-500">
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-gray-400">
         {DAY_LABELS.map((d) => (
           <div key={d} className="py-1.5 font-medium uppercase tracking-wide">
             {d}
@@ -126,11 +126,11 @@ export default function CalendarPicker({
               className={cn(
                 "mx-auto flex h-10 w-10 items-center justify-center rounded-lg text-sm transition-all duration-150",
                 disabled
-                  ? "cursor-not-allowed text-neutral-600"
-                  : "cursor-pointer font-medium text-neutral-100 hover:bg-neutral-700",
+                  ? "cursor-not-allowed text-gray-300"
+                  : "cursor-pointer font-medium text-gray-900 hover:bg-gray-100",
                 selected &&
-                  "bg-white text-neutral-900 hover:bg-neutral-200 hover:text-neutral-900",
-                todayDate && !selected && !disabled && "ring-1 ring-neutral-400 font-semibold"
+                  "bg-gray-900 text-white hover:bg-gray-800 hover:text-white",
+                todayDate && !selected && !disabled && "ring-1 ring-gray-900 font-semibold"
               )}
             >
               {day}

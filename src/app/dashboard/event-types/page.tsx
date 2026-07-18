@@ -73,7 +73,6 @@ export default async function EventTypesPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="relative z-20 inline-flex max-w-[180px] items-center gap-1 truncate text-xs text-neutral-500 transition-colors hover:text-neutral-300"
-                        onClick={(e) => e.stopPropagation()}
                       >
                         <ExternalLink className="h-3 w-3 shrink-0" />
                         <span className="truncate">/{et.slug}</span>
